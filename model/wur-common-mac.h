@@ -12,6 +12,7 @@
 #include "contrib/wake-up-radio/model/wur-common-mac-state-helper.h"
 #include "contrib/wake-up-radio/model/wur-main-radio-net-device-phy.h"
 #include "contrib/wake-up-radio/model/wur-main-radio-net-device.h"
+#include "ns3/traced-callback.h"
 #include "ns3/wur-net-device.h"
 #include "ns3/nstime.h"
 #include "ns3/object.h"
@@ -44,6 +45,7 @@ class WurCommonMac : public Object {
         virtual void StartDataTx() = 0;
         void StartDataRx();
         void OnWurMechanismSuccess();
+        void NotifyTx(Ptr<Packet>);
 
        private:
         Timer wurSendingTimer;
@@ -57,6 +59,11 @@ class WurCommonMac : public Object {
         Ptr<WurMainRadioNetDevicePhy> m_mainRadioPhy;
         Ptr<WurMainRadioNetDevice> m_mainRadioNetDevice;
         Ptr<WurNetDevice> m_wurNetDevice;
+        TracedCallback<Ptr<const Packet>> m_macTxTrace;
+        TracedCallback<Ptr<const Packet>> m_macTxDropTrace;
+        TracedCallback<Ptr<const Packet>> m_macRxDropTrace;
+        TracedCallback<Ptr<const Packet>> m_macPromiscRxTrace;
+        TracedCallback<Ptr<const Packet>> m_macRxTrace;
         
         void Initialize();
 };

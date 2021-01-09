@@ -7,17 +7,19 @@ class WurMainRadioNetDevicePhyStateHelper : public Object
 
 {
        public:
-        bool IsAwake() { return phyState == ON; }
+        bool IsAwake() { return phyState != OFF; }
         void GoToSleep() { phyState = OFF; }
-        void WakeUp() { phyState = ON; }
+        void WakeUp() { phyState = IDLE; }
 
-       private:
         typedef enum MAIN_RADIO_STATE {
-                ON,
+                IDLE,
                 OFF,
+                RX,
+                TX,
         } MainRadioState_t;
 
         MainRadioState_t phyState;
+        MainRadioState_t GetState() { return phyState; }
 };
 }  // namespace ns3
 

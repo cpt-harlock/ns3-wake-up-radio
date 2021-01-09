@@ -1,5 +1,38 @@
 #include "wur-common-mac.h"
+#include "src/core/model/type-id.h"
 namespace ns3 {
+
+TypeId WurCommonMac::GetTypeId() {
+static TypeId tid = TypeId ("ns3::WurCommonMac")
+    .SetParent<Object> ()
+    .SetGroupName ("Wur")
+    .AddTraceSource ("MacTx",
+                     "A packet has been received from higher layers and is being processed in preparation for "
+                     "queueing for transmission.",
+                     MakeTraceSourceAccessor (&WurCommonMac::m_macTxTrace),
+                     "ns3::Packet::TracedCallback")
+    .AddTraceSource ("MacTxDrop",
+                     "A packet has been dropped in the MAC layer before transmission.",
+                     MakeTraceSourceAccessor (&WurCommonMac::m_macTxDropTrace),
+                     "ns3::Packet::TracedCallback")
+    .AddTraceSource ("MacPromiscRx",
+                     "A packet has been received by this device, has been passed up from the physical layer "
+                     "and is being forwarded up the local protocol stack.  This is a promiscuous trace.",
+                     MakeTraceSourceAccessor (&WurCommonMac::m_macPromiscRxTrace),
+                     "ns3::Packet::TracedCallback")
+    .AddTraceSource ("MacRx",
+                     "A packet has been received by this device, has been passed up from the physical layer "
+                     "and is being forwarded up the local protocol stack. This is a non-promiscuous trace.",
+                     MakeTraceSourceAccessor (&WurCommonMac::m_macRxTrace),
+                     "ns3::Packet::TracedCallback")
+    .AddTraceSource ("MacRxDrop",
+                     "A packet has been dropped in the MAC layer after it has been passed up from the physical layer.",
+                     MakeTraceSourceAccessor (&WurCommonMac::m_macRxDropTrace),
+                     "ns3::Packet::TracedCallback")
+  ;
+  return tid;
+
+}
 
 void WurCommonMac::Initialize() {
         // init timers
@@ -79,6 +112,10 @@ void WurCommonMac::TimerDataSendingCallback() {
         m_mainRadioNetDevice->TurnOff();
         // start wurSendingTimer if something else is in tx queue
         TimerWurMechanismCallback();
+}
+
+void WurCommonMac::NotifyTx(Ptr<Packet> packet) {
+        m_macTxTrace (packet);
 }
 
 }  // namespace ns3

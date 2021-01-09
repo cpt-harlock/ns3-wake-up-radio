@@ -11,6 +11,7 @@
 #include "ns3/mobility-model.h"
 #include "ns3/net-device.h"
 #include "ns3/node.h"
+#include "ns3/pointer.h"
 #include "ns3/simulator.h"
 #include "src/wifi/model/wifi-utils.h"
 
@@ -32,22 +33,23 @@ std::size_t WurMainRadioNetDeviceChannel::GetNDevices() const {
         return m_phyList.size();
 }
 TypeId WurMainRadioNetDeviceChannel::GetTypeId(void) {
-        static TypeId tid = TypeId("ns3::WurMainRadioNetDeviceChannel")
-                                .SetParent<Channel>()
-                                .SetGroupName("WurMainRadio")
-                                .AddConstructor<WurMainRadioNetDeviceChannel>();
-        // .AddAttribute("PropagationLossModel",
-        //               "A pointer to the propagation loss model "
-        //               "attached to this channel.",
-        //               PointerValue(),
-        //               MakePointerAccessor(&YansWifiChannel::m_loss),
-        //               MakePointerChecker<PropagationLossModel>())
-        // .AddAttribute("PropagationDelayModel",
-        //               "A pointer to the propagation delay model "
-        //               "attached to this channel.",
-        //               PointerValue(),
-        //               MakePointerAccessor(&YansWifiChannel::m_delay),
-        //               MakePointerChecker<PropagationDelayModel>());
+        static TypeId tid =
+            TypeId("ns3::WurMainRadioNetDeviceChannel")
+                .SetParent<Channel>()
+                .SetGroupName("WurMainRadio")
+                .AddConstructor<WurMainRadioNetDeviceChannel>()
+                .AddAttribute("PropagationLossModel",
+                              "A pointer to the propagation loss model "
+                              "attached to this channel.",
+                              PointerValue(),
+                              MakePointerAccessor(&WurMainRadioNetDeviceChannel::m_loss),
+                              MakePointerChecker<PropagationLossModel>())
+                .AddAttribute("PropagationDelayModel",
+                              "A pointer to the propagation delay model "
+                              "attached to this channel.",
+                              PointerValue(),
+                              MakePointerAccessor(&WurMainRadioNetDeviceChannel::m_delay),
+                              MakePointerChecker<PropagationDelayModel>());
         return tid;
 }
 
@@ -86,7 +88,6 @@ void WurMainRadioNetDeviceChannel::Send(Ptr<WurMainRadioNetDevicePhy> sender,
                         //        continue;
                         //}
 
-                        // For now don't give a fuck about channel :)
                         Ptr<MobilityModel> receiverMobility =
                             (*i)->GetMobility()->GetObject<MobilityModel>();
                         // valid only for speed << c :)

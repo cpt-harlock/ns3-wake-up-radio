@@ -36,7 +36,7 @@ class WurMainRadioNetDevice : public NetDevice {
         virtual bool IsPointToPoint(void) const = 0;
         virtual bool IsBridge(void) const = 0;
         virtual bool Send(Ptr<Packet> packet, const Address& dest,
-                          uint16_t protocolNumber) = 0;
+                          uint16_t protocolNumber);
         Ptr<Node> GetNode(void) const;
         void SetNode(const Ptr<Node> node);
         bool NeedsArp(void) const;

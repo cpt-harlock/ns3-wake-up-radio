@@ -1,11 +1,14 @@
 #include "wur-main-radio-net-device.h"
-#include "wur-common-mac.h"
-#include "ns3/node.h"
+
 #include <bits/stdint-uintn.h>
 
 #include "contrib/wake-up-radio/model/wur-main-radio-net-device-phy.h"
+#include "ns3/node.h"
+#include "wur-common-mac.h"
 
 namespace ns3 {
+
+NS_LOG_COMPONENT_DEFINE("WurMainRadioNetDevice");
 Ptr<WurCommonMac> WurMainRadioNetDevice::GetMac() const { return m_mac; }
 
 Ptr<WurMainRadioNetDevicePhy> WurMainRadioNetDevice::GetPhy() const {
@@ -66,12 +69,26 @@ void WurMainRadioNetDevice::SetReceiveCallback(NetDevice::ReceiveCallback cb) {
         m_forwardUp = cb;
 }
 
-void
-WurMainRadioNetDevice::SetPromiscReceiveCallback (PromiscReceiveCallback cb)
-{
-  m_promiscRx = cb;
-  m_mac->SetPromisc();
+void WurMainRadioNetDevice::SetPromiscReceiveCallback(
+    PromiscReceiveCallback cb) {
+        m_promiscRx = cb;
+        m_mac->SetPromisc();
 }
+bool WurMainRadioNetDevice::Send(Ptr<Packet> packet, const Address &dest,
+                                 uint16_t protocolNumber) {
+        NS_LOG_FUNCTION(this << packet << dest << protocolNumber);
+        NS_ASSERT(Mac48Address::IsMatchingType(dest));
 
+        Mac48Address realTo = Mac48Address::ConvertFrom(dest);
+
+        // Don't mind above protocol
+        // LlcSnapHeader llc;
+        // llc.SetType(protocolNumber);
+        // packet->AddHeader(llc);
+
+        m_mac->NotifyTx(packet);
+        m_mac->Enqueue(packet, realTo);
+        return true;
+}
 
 }  // namespace ns3
