@@ -9,14 +9,11 @@
 def build(bld):
     module = bld.create_ns3_module('wake-up-radio', ['core'])
     module.source = [
-        'model/wur-net-device.cc',
-        'model/wur-mac.cc',
-        'model/wur-phy.cc',
-        'model/wur-mode.cc',
-        'model/wur-tx-vector.cc',
-        'model/wur-net-device.cc',
-        'model/wur-phy-state-helper.cc',
-        #'helper/wake-up-radio-helper.cc',
+        'model/wur-main-radio-net-device.cc',
+        'model/wur-main-radio-net-device-channel.cc',
+        'model/wur-main-radio-net-device-phy.cc',
+        'model/wur-main-radio-net-device-phy-state-helper.cc',
+        'model/wur-main-radio-ppdu.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('wake-up-radio')
@@ -32,20 +29,11 @@ def build(bld):
     headers = bld(features='ns3header')
     headers.module = 'wake-up-radio'
     headers.source = [
-        'model/wur-net-device.h',
-        'model/wur-phy.h',
-        'model/wur-mac.h',
-        'model/wur-phy-band.h',
-        'model/wur-mode.h',
-        'model/wur-preamble.h',
-        'model/wur-phy-state.h',
-        'model/wur-mpdu-type.h',
-        'model/wur-standards.h',
-        'model/wur-tx-vector.h',
-        'model/wur-error-rate-model.h',
-        'model/wur-interference-helper.h',
-        'model/wur-phy-state-helper.h',
-        #'helper/wake-up-radio-helper.h',
+        'model/wur-main-radio-net-device.h',
+        'model/wur-main-radio-net-device-phy.h',
+        'model/wur-main-radio-net-device-phy-state-helper.h',
+        'model/wur-main-radio-net-device-channel.h',
+        'model/wur-main-radio-ppdu.h',
         ]
 
     if bld.env.ENABLE_EXAMPLES:

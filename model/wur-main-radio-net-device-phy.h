@@ -15,19 +15,26 @@
 #include "ns3/object.h"
 #include "wur-main-radio-net-device-phy-state-helper.h"
 namespace ns3 {
+      class WurMainRadioNetDeviceChannel;
 
 class WurMainRadioNetDevicePhy : public Object {
        public:
         static TypeId GetTypeId(void);
         WurMainRadioNetDevicePhy();
         virtual ~WurMainRadioNetDevicePhy();
+        Ptr<WurMainRadioNetDeviceChannel> GetChannel() const;
         Ptr<NetDevice> GetDevice() const;
         Ptr<MobilityModel> GetMobility() const;
+        void SetDevice(Ptr<NetDevice>);
+        void SetMobility(Ptr<MobilityModel>);
+        void SetChannel(Ptr<WurMainRadioNetDeviceChannel>);
         virtual void StartReceivePreamble(Ptr<WurMainRadioPpdu>,
                                           double rxPower) = 0;
-        double GetRxGain() const;
-        double GetRxSensitivity() const;
+        virtual double GetRxGain() const = 0;
+        virtual double GetRxSensitivity() const = 0;
         bool IsAwake() const;
+        void TurnOn();
+        void TurnOff();
 
         /**
          * \param callback the callback to invoke
@@ -48,6 +55,7 @@ class WurMainRadioNetDevicePhy : public Object {
         Ptr<NetDevice> m_netdevice;
         Ptr<MobilityModel> m_mobility;
         Ptr<WurMainRadioNetDevicePhyStateHelper> m_statehelper;
+        Ptr<WurMainRadioNetDeviceChannel> m_channel;
 };
 }  // namespace ns3
 #endif

@@ -14,8 +14,8 @@ namespace ns3 {
 class WurMainRadioNetDeviceChannel : public Channel {
        public:
         static TypeId GetTypeId(void);
-        WurMainRadioNetDeviceChannel();
-        virtual ~WurMainRadioNetDeviceChannel();
+        WurMainRadioNetDeviceChannel() : Channel() {}
+        virtual ~WurMainRadioNetDeviceChannel() {};
         // inherited from channel
         virtual std::size_t GetNDevices(void) const;
         virtual Ptr<NetDevice> GetDevice(std::size_t i) const;
