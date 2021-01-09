@@ -12,13 +12,13 @@
 #include "contrib/wake-up-radio/model/wur-common-mac-state-helper.h"
 #include "contrib/wake-up-radio/model/wur-main-radio-net-device-phy.h"
 #include "contrib/wake-up-radio/model/wur-main-radio-net-device.h"
+#include "ns3/wur-net-device.h"
 #include "ns3/nstime.h"
 #include "ns3/object.h"
 #include "ns3/timer.h"
 namespace ns3 {
 
 class Address;
-class WurNetDevice;
 
 class WurCommonMac : public Object {
        public:
