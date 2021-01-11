@@ -3,18 +3,19 @@
 #include "contrib/wake-up-radio/model/wur-main-radio-net-device-phy-state-helper.h"
 #include "contrib/wake-up-radio/model/wur-main-radio-net-device-phy.h"
 #include "contrib/wake-up-radio/model/wur-main-radio-ppdu.h"
+#include "contrib/wake-up-radio/model/wur-main-radio-psdu.h"
+#include "ns3/nstime.h"
 #include "ns3/simulator.h"
+#include "src/wifi/model/wifi-phy-state.h"
 namespace ns3 {
 NS_LOG_COMPONENT_DEFINE("WurMainRadioNetDeviceDummyPhy");
 
 void WurMainRadioNetDeviceDummyPhy::StartReceivePreamble(
     Ptr<const WurMainRadioPpdu> ppdu, double rxPowerW) {
         NS_LOG_FUNCTION(this << *ppdu << rxPowerW);
-        Time rxDuration = ppdu->GetTxDuration();
-        Ptr<const WurMainRadioPpdu> psdu = ppdu->GetPsdu();
+        // Ptr<const WurMainRadioPpdu> psdu = ppdu->GetPsdu();
         // Ptr<Event> event =
         // m_interference.Add(ppdu, txVector, rxDuration, rxPowerW);
-        Time endRx = Simulator::Now() + rxDuration;
 
         // already managed at channel level
         // if (m_state->GetState() == WifiPhyState::OFF) {
@@ -42,7 +43,7 @@ void WurMainRadioNetDeviceDummyPhy::StartReceivePreamble(
 
                         NS_LOG_DEBUG("Drop packet because already in Rx (power="
                                      << rxPowerW << "W)");
-                        NotifyRxDrop(psdu, "Already receiving packet");
+                        NotifyRxDrop(ppdu, "Already receiving packet");
                         // if (endRx >
                         //    (Simulator::Now() + m_state->GetDelayUntilIdle()))
                         //    {
@@ -56,7 +57,7 @@ void WurMainRadioNetDeviceDummyPhy::StartReceivePreamble(
                 case WurMainRadioNetDevicePhyStateHelper::TX:
                         NS_LOG_DEBUG("Drop packet because already in Tx (power="
                                      << rxPowerW << "W)");
-                        NotifyRxDrop(psdu, "Already in Tx");
+                        NotifyRxDrop(ppdu, "Already in Tx");
                         // if (endRx >
                         //    (Simulator::Now() + m_state->GetDelayUntilIdle()))
                         //    {
@@ -99,11 +100,11 @@ void WurMainRadioNetDeviceDummyPhy::StartReceivePreamble(
                 //        }
                 //        break;
                 case WurMainRadioNetDevicePhyStateHelper::IDLE:
-                        StartRx(psdu, rxPowerW);
+                        StartRx(ppdu, rxPowerW);
                         break;
                 case WurMainRadioNetDevicePhyStateHelper::OFF:
                         NS_LOG_DEBUG("Drop packet because in sleep mode");
-                        NotifyRxDrop(psdu, "Sleeping");
+                        NotifyRxDrop(ppdu, "Sleeping");
                         // if (endRx >
                         //    (Simulator::Now() + m_state->GetDelayUntilIdle()))
                         //    {
@@ -118,46 +119,68 @@ void WurMainRadioNetDeviceDummyPhy::StartReceivePreamble(
         }
 }
 
-void WurMainRadioNetDeviceDummyPhy::StartRx(Ptr<const WurMainRadioPpdu> packet,
+void WurMainRadioNetDeviceDummyPhy::StartRx(Ptr<const WurMainRadioPpdu> ppdu,
                                             double rxPowerW) {
-        NS_LOG_FUNCTION(this << *packet << rxPowerW);
+        NS_LOG_FUNCTION(this << *ppdu << rxPowerW);
         NS_LOG_DEBUG("sync to signal (power=" << rxPowerW << "W)");
         SetState(WurMainRadioNetDevicePhyStateHelper::RX);
-        Time startOfPreambleDuration = GetPreambleDetectionDuration();
+        // fixed preamble duration
+        Time startOfPreambleDuration = PREAMBLE_DURATION;
+        // set current receiving packet
+        currentRxPacket = ppdu;
         // schedule header reception after preamble reception
         Simulator::Schedule(startOfPreambleDuration,
                             &WurMainRadioNetDeviceDummyPhy::StartReceiveHeader,
-                            this, packet);
+                            this, ppdu);
 }
 
 void WurMainRadioNetDeviceDummyPhy::StartReceiveHeader(
-    Ptr<const WurMainRadioPpdu> psdu) {
-        NS_LOG_FUNCTION(this << *psdu);
-        NotifyRxBegin(psdu);
-        // we don't give a fuck about PHY header
-        Simulator::Schedule(GetHeaderDuration(),
+    Ptr<const WurMainRadioPpdu> ppdu) {
+        NS_LOG_FUNCTION(this << *ppdu);
+        NotifyRxBegin(ppdu);
+        Time headerDuration =
+            Seconds((double)ppdu->GetPpduHeaderLength() / BIT_PER_SECONDS);
+        Simulator::Schedule(headerDuration,
                             &WurMainRadioNetDeviceDummyPhy::StartReceivePayload,
-                            this, psdu);
+                            this, ppdu->GetPsdu());
 }
 
 void WurMainRadioNetDeviceDummyPhy::StartReceivePayload(
-    Ptr<const WurMainRadioPpdu> psdu) {
+    Ptr<const WurMainRadioPsdu> psdu) {
         NS_LOG_FUNCTION(this << *psdu);
-        Time payloadDuration = psdu->GetPayloadDuration();
+        Time payloadDuration =
+            Seconds((psdu->GetPacket()->GetSize() * 8.0) / BIT_PER_SECONDS);
         Simulator::Schedule(payloadDuration,
                             &WurMainRadioNetDeviceDummyPhy::EndReceivePayload,
                             this, psdu);
         NS_LOG_DEBUG("Receiving PSDU");
 }
 void WurMainRadioNetDeviceDummyPhy::EndReceivePayload(
-    Ptr<WurMainRadioPpdu> psdu) {
+    Ptr<WurMainRadioPsdu> psdu) {
         NS_LOG_FUNCTION(this << *psdu);
         // trace rx end
         NotifyRxEnd(psdu);
         SetState(WurMainRadioNetDevicePhyStateHelper::IDLE);
+        // removing current receiving packet
+        currentRxPacket = nullptr;
         // notify MAC of ok reception
         if (!m_rxOkCallback.IsNull()) {
-                m_rxOkCallback(psdu);
+                m_rxOkCallback(psdu->GetPacket());
+        }
+}
+
+void WurMainRadioNetDeviceDummyPhy::TurnOn() {
+        if (GetState() == WurMainRadioNetDevicePhyStateHelper::OFF)
+                SetState(WurMainRadioNetDevicePhyStateHelper::IDLE);
+}
+
+void WurMainRadioNetDeviceDummyPhy::TurnOff() {
+        if(GetState() != WurMainRadioNetDevicePhyStateHelper::OFF) {
+                if(currentRxPacket != nullptr)
+                        currentRxPacket->SetTruncatedRx();
+                if(currentTxPacket != nullptr)
+                        currentTxPacket->SetTruncatedTx();
+                SetState(WurMainRadioNetDevicePhyStateHelper::OFF);
         }
 }
 

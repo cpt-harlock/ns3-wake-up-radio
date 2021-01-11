@@ -10,4 +10,8 @@ void WurMainRadioPpdu::SetTruncatedTx() {
         m_truncatedTx = true;
 }
 
+void WurMainRadioPpdu::SetTruncatedRx() {
+        NS_LOG_FUNCTION(this);
+        m_truncatedRx = true;
+}
 }  // namespace ns3

@@ -1,4 +1,5 @@
 #include "wur-common-mac.h"
+#include "ns3/callback.h"
 #include "src/core/model/type-id.h"
 namespace ns3 {
 
@@ -118,5 +119,25 @@ void WurCommonMac::NotifyTx(Ptr<Packet> packet) {
         m_macTxTrace (packet);
 }
 
+void WurCommonMac::SetMainRadioNetDevice(const Ptr<WurMainRadioNetDevice> device) { 
+        if(device != nullptr) {
+                m_mainRadioNetDevice = device;
+                m_mainRadioNetDevice->GetPhy()->SetReceiveOkCallback(MakeCallback(&WurCommonMac::OnDataRx, this));
+        }
+}
+Ptr<WurMainRadioNetDevice> WurCommonMac::GetMainRadioNetDevice(void) const { 
+        return m_mainRadioNetDevice;
+}
+
+void WurCommonMac::SetWurNetDevice(const Ptr<WurNetDevice> device) { 
+        if(device != nullptr) {
+                m_wurNetDevice = device;
+        }
+}
+
+Ptr<WurNetDevice> WurCommonMac::GetWurNetDevice(void) const {
+        return m_wurNetDevice;
+}
+       
 }  // namespace ns3
 

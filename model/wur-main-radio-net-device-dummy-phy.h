@@ -14,13 +14,18 @@ class WurMainRadioNetDeviceDummyPhy : public WurMainRadioNetDevicePhy {
         Time GetPreambleDetectionDuration() { return PREAMBLE_DURATION; }
         Time GetHeaderDuration() { return PREAMBLE_DURATION; }
         void StartReceiveHeader(Ptr<const WurMainRadioPpdu>);
-        void StartReceivePayload(Ptr<const WurMainRadioPpdu>);
-        void EndReceivePayload(Ptr<WurMainRadioPpdu>);
+        void StartReceivePayload(Ptr<const WurMainRadioPsdu>);
+        void EndReceivePayload(Ptr<WurMainRadioPsdu>);
+        void TurnOn();
+        void TurnOff();
 
        private:
         const double RX_SENSITIVITY = -100;
         const double RX_GAIN = 2.15;
+        const uint BIT_PER_SECONDS =  1000;
         const Time PREAMBLE_DURATION = MilliSeconds(1);
+        Ptr<WurMainRadioPpdu> currentRxPacket;
+        Ptr<WurMainRadioPpdu> currentTxPacket;
 };
 
 }  // namespace ns3

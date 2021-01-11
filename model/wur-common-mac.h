@@ -30,6 +30,8 @@ class WurCommonMac : public Object {
         virtual void SetAddress(Address) = 0;
         virtual Address GetAddress(void) const = 0;
         static TypeId GetTypeId(void);
+        //TODO: reset main and wur device functions
+        //TODO: add listeners for phy events
         void SetMainRadioNetDevice(const Ptr<WurMainRadioNetDevice> device);
         Ptr<WurMainRadioNetDevice> GetMainRadioNetDevice(void) const;
         void SetWurNetDevice(const Ptr<WurNetDevice> device);
@@ -38,6 +40,7 @@ class WurCommonMac : public Object {
         //Enqueue a packet at MAC level
         virtual void Enqueue(Ptr<Packet> packet, Address to) = 0;
         virtual void StartWurMechanism() = 0;
+        virtual void OnDataRx(Ptr<Packet>) = 0;
         void TimerWurMechanismCallback();
         void TimerDataReceivingCallback();
         void TimerDataSendingCallback();

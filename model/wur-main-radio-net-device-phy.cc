@@ -1,10 +1,12 @@
 #include "contrib/wake-up-radio/model/wur-main-radio-net-device-phy.h"
 
+#include <string>
+
 #include "contrib/wake-up-radio/model/wur-main-radio-net-device-channel.h"
+#include "contrib/wake-up-radio/model/wur-main-radio-net-device-phy-state-helper.h"
 #include "contrib/wake-up-radio/model/wur-main-radio-ppdu.h"
 #include "ns3/mobility-model.h"
 #include "ns3/net-device.h"
-#include <string>
 namespace ns3 {
 Ptr<MobilityModel> WurMainRadioNetDevicePhy::GetMobility() const {
         return m_mobility;
@@ -18,7 +20,8 @@ Ptr<WurMainRadioNetDeviceChannel> WurMainRadioNetDevicePhy::GetChannel() const {
         return m_channel;
 }
 
-void WurMainRadioNetDevicePhy::SetChannel(Ptr<WurMainRadioNetDeviceChannel> channel) {
+void WurMainRadioNetDevicePhy::SetChannel(
+    Ptr<WurMainRadioNetDeviceChannel> channel) {
         m_channel = channel;
 }
 bool WurMainRadioNetDevicePhy::IsAwake() const {
@@ -33,66 +36,57 @@ void WurMainRadioNetDevicePhy::SetDevice(Ptr<NetDevice> device) {
         m_netdevice = device;
 }
 
-void WurMainRadioNetDevicePhy::TurnOn() {
-        m_stateHelper->WakeUp();
+void WurMainRadioNetDevicePhy::NotifyTxBegin(Ptr<const WurMainRadioPpdu> psdu,
+                                             double txPowerW) {
+        // m_phyTxBeginTrace (psdu, txPowerW);
 }
 
-void WurMainRadioNetDevicePhy::TurnOff() {
-        m_stateHelper->GoToSleep();
+void WurMainRadioNetDevicePhy::NotifyTxEnd(Ptr<const WurMainRadioPpdu> psdu) {
+        // m_phyTxEndTrace (mpdu->GetProtocolDataUnit ());
 }
 
-void
-WurMainRadioNetDevicePhy::NotifyTxBegin (Ptr<const WurMainRadioPpdu> psdu, double txPowerW)
-{
-  for (auto& mpdu : *PeekPointer (psdu))
-    {
-      m_phyTxBeginTrace (mpdu->GetProtocolDataUnit (), txPowerW);
-    }
+void WurMainRadioNetDevicePhy::NotifyTxDrop(Ptr<const WurMainRadioPpdu> psdu) {
+        // for (auto& mpdu : *PeekPointer (psdu))
+        //  {
+        //    m_phyTxDropTrace (mpdu->GetProtocolDataUnit ());
+        //  }
 }
 
-void
-WurMainRadioNetDevicePhy::NotifyTxEnd (Ptr<const WurMainRadioPpdu> psdu)
-{
-  for (auto& mpdu : *PeekPointer (psdu))
-    {
-      m_phyTxEndTrace (mpdu->GetProtocolDataUnit ());
-    }
+void WurMainRadioNetDevicePhy::NotifyRxBegin(Ptr<const WurMainRadioPpdu> psdu) {
+        // for (auto& mpdu : *PeekPointer (psdu))
+        //  {
+        //    m_phyRxBeginTrace (mpdu->GetProtocolDataUnit ());
+        //  }
 }
 
-void
-WurMainRadioNetDevicePhy::NotifyTxDrop (Ptr<const WurMainRadioPpdu> psdu)
-{
-  for (auto& mpdu : *PeekPointer (psdu))
-    {
-      m_phyTxDropTrace (mpdu->GetProtocolDataUnit ());
-    }
+void WurMainRadioNetDevicePhy::NotifyRxEnd(Ptr<const WurMainRadioPpdu> psdu) {
+        // for (auto& mpdu : *PeekPointer (psdu))
+        //  {
+        // m_phyRxEndTrace (psdu);
+        //  }
 }
 
-void
-WurMainRadioNetDevicePhy::NotifyRxBegin (Ptr<const WurMainRadioPpdu> psdu)
-{
-  for (auto& mpdu : *PeekPointer (psdu))
-    {
-      m_phyRxBeginTrace (mpdu->GetProtocolDataUnit ());
-    }
+void WurMainRadioNetDevicePhy::NotifyRxDrop(Ptr<const WurMainRadioPpdu> psdu,
+                                            std::string reason) {
+        // for (auto& mpdu : *PeekPointer (psdu))
+        // {
+        // m_phyRxDropTrace (psdu, reason);
+        //}
 }
 
-void
-WurMainRadioNetDevicePhy::NotifyRxEnd (Ptr<const WurMainRadioPpdu> psdu)
-{
-  for (auto& mpdu : *PeekPointer (psdu))
-    {
-      m_phyRxEndTrace (mpdu->GetProtocolDataUnit ());
-    }
+void WurMainRadioNetDevicePhy::SetReceiveOkCallback(RxOkCallback callback) {
+        m_rxOkCallback = callback;
 }
 
-void
-WurMainRadioNetDevicePhy::NotifyRxDrop (Ptr<const WurMainRadioPpdu> psdu,std::string reason)
-{
-  for (auto& mpdu : *PeekPointer (psdu))
-    {
-      m_phyRxDropTrace (mpdu->GetProtocolDataUnit (), reason);
-    }
+WurMainRadioNetDevicePhyStateHelper::MainRadioState_t
+WurMainRadioNetDevicePhy::GetState() {
+        return m_stateHelper->GetState();
 }
+
+void WurMainRadioNetDevicePhy::SetState(
+    WurMainRadioNetDevicePhyStateHelper::MainRadioState_t state) {
+        m_stateHelper->phyState = state;
+}
+
 }  // namespace ns3
 

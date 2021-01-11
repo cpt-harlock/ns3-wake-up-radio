@@ -21,6 +21,7 @@ class WurMainRadioNetDeviceChannel;
 
 class WurMainRadioNetDevicePhy : public Object {
        public:
+        typedef Callback<void, Ptr<Packet> > RxOkCallback;
         static TypeId GetTypeId(void);
         WurMainRadioNetDevicePhy();
         virtual ~WurMainRadioNetDevicePhy();
@@ -35,28 +36,23 @@ class WurMainRadioNetDevicePhy : public Object {
         virtual double GetRxGain() const = 0;
         virtual double GetRxSensitivity() const = 0;
         bool IsAwake() const;
-        void TurnOn();
-        void TurnOff();
-        WurMainRadioNetDevicePhyStateHelper::MainRadioState_t GetState() {
-                return m_stateHelper->GetState();
-        }
-        void SetState(
-            WurMainRadioNetDevicePhyStateHelper::MainRadioState_t state) {
-                m_stateHelper->phyState = state;
-        }
-
+        virtual void TurnOn();
+        virtual void TurnOff();
+        
         void NotifyRxBegin(Ptr<const WurMainRadioPpdu>);
         void NotifyRxDrop(Ptr<const WurMainRadioPpdu>, std::string);
         void NotifyRxEnd(Ptr<const WurMainRadioPpdu>);
         void NotifyTxBegin(Ptr<const WurMainRadioPpdu>, double);
         void NotifyTxDrop(Ptr<const WurMainRadioPpdu>);
         void NotifyTxEnd(Ptr<const WurMainRadioPpdu>);
-
+        
+        WurMainRadioNetDevicePhyStateHelper::MainRadioState_t GetState(void) ;
+        void SetState(WurMainRadioNetDevicePhyStateHelper::MainRadioState_t) ;
+        void SetReceiveOkCallback(RxOkCallback);
         /**
          * \param callback the callback to invoke
          *        upon successful packet reception.
          */
-        // void SetReceiveOkCallback(RxOkCallback callback);
         /**
          * \param callback the callback to invoke
          *        upon erroneous packet reception.
@@ -69,12 +65,11 @@ class WurMainRadioNetDevicePhy : public Object {
         //
         // InterferenceHelper _interference;
 
-        typedef Callback<void, Ptr<WurMainRadioPpdu> > RxOkCallback;
         RxOkCallback  m_rxOkCallback;
+        Ptr<WurMainRadioNetDevicePhyStateHelper> m_stateHelper;
        private:
         Ptr<NetDevice> m_netdevice;
         Ptr<MobilityModel> m_mobility;
-        Ptr<WurMainRadioNetDevicePhyStateHelper> m_stateHelper;
         Ptr<WurMainRadioNetDeviceChannel> m_channel;
 };
 }  // namespace ns3
