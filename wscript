@@ -14,10 +14,13 @@ def build(bld):
         'model/wur-main-radio-net-device-phy.cc',
         'model/wur-main-radio-net-device-phy-state-helper.cc',
         'model/wur-main-radio-ppdu.cc',
+        'model/wur-main-radio-psdu.cc',
         'model/wur-common-mac.cc',
         'model/wur-common-mac-state-helper.cc',
         'model/wur-net-device.cc',
         'model/wur-ppdu.cc',
+        'model/wur-common-dummy-mac.cc',
+        'model/wur-common-dummy-mac-header.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('wake-up-radio')
@@ -38,10 +41,14 @@ def build(bld):
         'model/wur-main-radio-net-device-phy.h',
         'model/wur-main-radio-net-device-phy-state-helper.h',
         'model/wur-main-radio-ppdu.h',
+        'model/wur-main-radio-psdu.h',
         'model/wur-common-mac.h',
         'model/wur-common-mac-state-helper.h',
         'model/wur-net-device.h',
         'model/wur-ppdu.h',
+        'model/wur-common-dummy-mac.h',
+        'model/wur-common-dummy-mac-header.h',
+        
        ]
 
     if bld.env.ENABLE_EXAMPLES:

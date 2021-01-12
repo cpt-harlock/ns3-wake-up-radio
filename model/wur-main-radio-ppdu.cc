@@ -2,7 +2,7 @@
 namespace ns3 {
 NS_LOG_COMPONENT_DEFINE("WurMainRadioPpdu");
 class WurMainRadioPsdu;
-Ptr<const WurMainRadioPsdu> WurMainRadioPpdu::GetPsdu(void) const {
+Ptr<WurMainRadioPsdu> WurMainRadioPpdu::GetPsdu(void) const {
         return m_psdu;
 }
 void WurMainRadioPpdu::SetTruncatedTx() {

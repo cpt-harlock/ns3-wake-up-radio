@@ -1,7 +1,7 @@
 #ifndef WUR_MAIN_RADIO_PSDU_H
 #define WUR_MAIN_RADIO_PSDU_H
 
-#include "contrib/wake-up-radio/model/wur-main-radio-ppdu.h"
+#include "ns3/packet.h"
 #include "ns3/simple-ref-count.h"
 namespace ns3 {
 class WurMainRadioPsdu : public SimpleRefCount<WurMainRadioPsdu> {

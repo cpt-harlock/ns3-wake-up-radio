@@ -7,14 +7,14 @@
 namespace ns3 {
 class WurMainRadioNetDeviceDummyPhy : public WurMainRadioNetDevicePhy {
        public:
-        void StartReceivePreamble(Ptr<const WurMainRadioPpdu>, double);
-        void StartRx(Ptr<const WurMainRadioPpdu>, double);
+        void StartReceivePreamble(Ptr<WurMainRadioPpdu>, double);
+        void StartRx(Ptr<WurMainRadioPpdu>, double);
         double GetRxGain() const { return RX_GAIN; };
         double GetRxSensitivity() const { return RX_SENSITIVITY; };
         Time GetPreambleDetectionDuration() { return PREAMBLE_DURATION; }
         Time GetHeaderDuration() { return PREAMBLE_DURATION; }
-        void StartReceiveHeader(Ptr<const WurMainRadioPpdu>);
-        void StartReceivePayload(Ptr<const WurMainRadioPsdu>);
+        void StartReceiveHeader(Ptr<WurMainRadioPpdu>);
+        void StartReceivePayload(Ptr<WurMainRadioPsdu>);
         void EndReceivePayload(Ptr<WurMainRadioPsdu>);
         void TurnOn();
         void TurnOff();

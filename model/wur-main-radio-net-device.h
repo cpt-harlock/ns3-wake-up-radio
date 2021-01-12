@@ -1,7 +1,7 @@
 #ifndef WUR_MAIN_RADIO_NET_DEVICE_H
 #define WUR_MAIN_RADIO_NET_DEVICE_H
 
-#include "contrib/wake-up-radio/model/wur-main-radio-net-device-channel.h"
+#include "wur-main-radio-net-device-channel.h"
 #include "ns3/net-device.h"
 namespace ns3 {
 
@@ -27,21 +27,21 @@ class WurMainRadioNetDevice : public NetDevice {
         Address GetAddress(void) const;
         bool SetMtu(const uint16_t mtu);
         uint16_t GetMtu(void) const;
-        bool IsLinkUp(void) const;
-        void AddLinkChangeCallback(Callback<void> callback);
-        virtual bool IsBroadcast(void) const = 0;
-        virtual Address GetBroadcast(void) const = 0;
-        virtual bool IsMulticast(void) const = 0;
-        virtual Address GetMulticast(Ipv4Address multicastGroup) const = 0;
-        virtual bool IsPointToPoint(void) const = 0;
-        virtual bool IsBridge(void) const = 0;
+        //bool IsLinkUp(void) const;
+        //void AddLinkChangeCallback(Callback<void> callback);
+        //virtual bool IsBroadcast(void) const = 0;
+        //virtual Address GetBroadcast(void) const = 0;
+        //virtual bool IsMulticast(void) const = 0;
+        //virtual Address GetMulticast(Ipv4Address multicastGroup) const = 0;
+        //virtual bool IsPointToPoint(void) const = 0;
+        //virtual bool IsBridge(void) const = 0;
         virtual bool Send(Ptr<Packet> packet, const Address& dest,
                           uint16_t protocolNumber);
         Ptr<Node> GetNode(void) const;
         void SetNode(const Ptr<Node> node);
-        bool NeedsArp(void) const;
+        //bool NeedsArp(void) const;
         void SetReceiveCallback(NetDevice::ReceiveCallback cb);
-        Address GetMulticast(Ipv6Address addr) const;
+        //Address GetMulticast(Ipv6Address addr) const;
         bool SendFrom(Ptr<Packet> packet, const Address& source,
                       const Address& dest, uint16_t protocolNumber);
         void SetPromiscReceiveCallback(PromiscReceiveCallback cb);

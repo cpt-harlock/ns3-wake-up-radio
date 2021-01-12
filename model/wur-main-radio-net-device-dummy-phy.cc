@@ -11,7 +11,7 @@ namespace ns3 {
 NS_LOG_COMPONENT_DEFINE("WurMainRadioNetDeviceDummyPhy");
 
 void WurMainRadioNetDeviceDummyPhy::StartReceivePreamble(
-    Ptr<const WurMainRadioPpdu> ppdu, double rxPowerW) {
+    Ptr<WurMainRadioPpdu> ppdu, double rxPowerW) {
         NS_LOG_FUNCTION(this << *ppdu << rxPowerW);
         // Ptr<const WurMainRadioPpdu> psdu = ppdu->GetPsdu();
         // Ptr<Event> event =
@@ -119,7 +119,7 @@ void WurMainRadioNetDeviceDummyPhy::StartReceivePreamble(
         }
 }
 
-void WurMainRadioNetDeviceDummyPhy::StartRx(Ptr<const WurMainRadioPpdu> ppdu,
+void WurMainRadioNetDeviceDummyPhy::StartRx(Ptr<WurMainRadioPpdu> ppdu,
                                             double rxPowerW) {
         NS_LOG_FUNCTION(this << *ppdu << rxPowerW);
         NS_LOG_DEBUG("sync to signal (power=" << rxPowerW << "W)");
@@ -135,7 +135,7 @@ void WurMainRadioNetDeviceDummyPhy::StartRx(Ptr<const WurMainRadioPpdu> ppdu,
 }
 
 void WurMainRadioNetDeviceDummyPhy::StartReceiveHeader(
-    Ptr<const WurMainRadioPpdu> ppdu) {
+    Ptr<WurMainRadioPpdu> ppdu) {
         NS_LOG_FUNCTION(this << *ppdu);
         NotifyRxBegin(ppdu);
         Time headerDuration =
@@ -146,7 +146,7 @@ void WurMainRadioNetDeviceDummyPhy::StartReceiveHeader(
 }
 
 void WurMainRadioNetDeviceDummyPhy::StartReceivePayload(
-    Ptr<const WurMainRadioPsdu> psdu) {
+    Ptr<WurMainRadioPsdu> psdu) {
         NS_LOG_FUNCTION(this << *psdu);
         Time payloadDuration =
             Seconds((psdu->GetPacket()->GetSize() * 8.0) / BIT_PER_SECONDS);

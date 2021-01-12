@@ -31,7 +31,7 @@ class WurMainRadioNetDevicePhy : public Object {
         void SetDevice(Ptr<NetDevice>);
         void SetMobility(Ptr<MobilityModel>);
         void SetChannel(Ptr<WurMainRadioNetDeviceChannel>);
-        virtual void StartReceivePreamble(Ptr<const WurMainRadioPpdu>,
+        virtual void StartReceivePreamble(Ptr<WurMainRadioPpdu>,
                                           double rxPower) = 0;
         virtual double GetRxGain() const = 0;
         virtual double GetRxSensitivity() const = 0;

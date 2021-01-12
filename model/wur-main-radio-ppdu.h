@@ -5,6 +5,7 @@
 
 #include "ns3/packet.h"
 #include "ns3/simple-ref-count.h"
+#include "ns3/wur-main-radio-psdu.h"
 namespace ns3 {
 
 class WurMainRadioPsdu;
@@ -14,14 +15,14 @@ class WurMainRadioPsdu;
  */
 class WurMainRadioPpdu : public SimpleRefCount<WurMainRadioPpdu> {
        public:
-        WurMainRadioPpdu(Ptr<const WurMainRadioPsdu> psdu,
+        WurMainRadioPpdu(Ptr<WurMainRadioPsdu> psdu,
                          uint32_t headerLength)
             : m_psdu(psdu),
               m_truncatedTx(false),
               m_headerLength(headerLength){};
         virtual ~WurMainRadioPpdu();
 
-        Ptr<const WurMainRadioPsdu> GetPsdu(void) const;
+        Ptr<WurMainRadioPsdu> GetPsdu(void) const;
 
         bool IsTruncatedTx(void) const { return m_truncatedTx; }
         bool IsTruncatedRx(void) const { return m_truncatedRx; }
