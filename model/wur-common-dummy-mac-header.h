@@ -4,6 +4,7 @@
 #include <bits/stdint-uintn.h>
 
 #include "ns3/header.h"
+#include "ns3/mac8-address.h"
 #include "src/network/utils/ipv6-address.h"
 
 namespace ns3 {
@@ -19,14 +20,16 @@ class WurCommonDummyMacHeader : public Header {
         virtual void Serialize(Buffer::Iterator start) const;
         virtual uint32_t Deserialize(Buffer::Iterator start);
         virtual void Print(std::ostream &os) const;
-        void SetFrom(uint32_t from) { m_from = from; }
-        void SetTo(uint32_t to) { m_to = to; }
-        uint32_t GetFrom() { return m_from; }
-        uint32_t GetTo() { return m_to; }
+        void SetFrom(uint8_t from) { m_from = Mac8Address(from); }
+        void SetTo(uint8_t to) { m_to = Mac8Address(to); }
+        void SetFrom(Address from) { m_from.ConvertFrom(from); }
+        void SetTo(Address to) { m_to.ConvertFrom(to); }
+        Mac8Address GetFrom() { return m_from; }
+        Mac8Address GetTo() { return m_to; }
 
        private:
-        uint32_t m_from;
-        uint32_t m_to;
+       Mac8Address  m_from;
+       Mac8Address m_to;
 };
 }  // namespace ns3
 

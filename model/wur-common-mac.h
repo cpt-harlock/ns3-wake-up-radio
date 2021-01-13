@@ -9,9 +9,8 @@
  * dispatch messages coming from the above layers to upper layers
  */
 
-#include "contrib/wake-up-radio/model/wur-common-mac-state-helper.h"
-#include "contrib/wake-up-radio/model/wur-main-radio-net-device-phy.h"
-#include "contrib/wake-up-radio/model/wur-main-radio-net-device.h"
+#include "wur-common-mac-state-helper.h"
+#include "wur-main-radio-net-device-phy.h"
 #include "ns3/traced-callback.h"
 #include "ns3/wur-net-device.h"
 #include "ns3/nstime.h"
@@ -20,6 +19,7 @@
 namespace ns3 {
 
 class Address;
+class WurMainRadioNetDevice;
 
 class WurCommonMac : public Object {
        public:
@@ -36,9 +36,9 @@ class WurCommonMac : public Object {
         Ptr<WurMainRadioNetDevice> GetMainRadioNetDevice(void) const;
         void SetWurNetDevice(const Ptr<WurNetDevice> device);
         Ptr<WurNetDevice> GetWurNetDevice(void) const;
-        virtual bool SupportsSendFrom(void) const = 0;
+        virtual bool SupportsSendFrom(void) const {return true;};
         //Enqueue a packet at MAC level
-        virtual void Enqueue(Ptr<Packet> packet, Address to) = 0;
+        virtual void Enqueue(Ptr<Packet> packet, Address to);
         virtual void StartWurMechanism() = 0;
         virtual void OnDataRx(Ptr<Packet>) = 0;
         void TimerWurMechanismCallback();
@@ -49,19 +49,19 @@ class WurCommonMac : public Object {
         void StartDataRx();
         void OnWurMechanismSuccess();
         void NotifyTx(Ptr<Packet>);
-
+       protected: 
+        Ptr<WurMainRadioNetDevicePhy> m_mainRadioPhy;
+        Ptr<WurMainRadioNetDevice> m_mainRadioNetDevice;
+        Ptr<WurNetDevice> m_wurNetDevice;
+        std::vector<Ptr<Packet>> m_txqueue;
        private:
         Timer wurSendingTimer;
         Timer dataSendingTimer;
         Timer dataReceivingTimer;
         Ptr<WurCommonMacStateHelper> m_stateHelper;
-        std::vector<Ptr<Packet>> m_txqueue;
         const Time WUR_MECHANISM_TIMEOUT = MilliSeconds(20);
         const Time DATA_RECEPTION_TIMEOUT = MilliSeconds(50);
         const Time DATA_TRANSMISSION_TIMEOUT = MilliSeconds(50);
-        Ptr<WurMainRadioNetDevicePhy> m_mainRadioPhy;
-        Ptr<WurMainRadioNetDevice> m_mainRadioNetDevice;
-        Ptr<WurNetDevice> m_wurNetDevice;
         TracedCallback<Ptr<const Packet>> m_macTxTrace;
         TracedCallback<Ptr<const Packet>> m_macTxDropTrace;
         TracedCallback<Ptr<const Packet>> m_macRxDropTrace;

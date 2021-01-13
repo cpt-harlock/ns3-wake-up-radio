@@ -5,6 +5,7 @@
 #include "contrib/wake-up-radio/model/wur-main-radio-net-device-channel.h"
 #include "contrib/wake-up-radio/model/wur-main-radio-net-device-phy-state-helper.h"
 #include "contrib/wake-up-radio/model/wur-main-radio-ppdu.h"
+#include "ns3/double.h"
 #include "ns3/mobility-model.h"
 #include "ns3/net-device.h"
 namespace ns3 {
@@ -88,5 +89,30 @@ void WurMainRadioNetDevicePhy::SetState(
         m_stateHelper->phyState = state;
 }
 
+TypeId WurMainRadioNetDevicePhy::GetTypeId(void) {
+        static TypeId tid =
+            TypeId("ns3::WurMainRadioNetDevicePhy")
+                .SetParent<Object>()
+                .SetGroupName("Wur")
+                .AddAttribute(
+                    "RxSensitivity",
+                    "The energy of a received signal should be higher than "
+                    "this threshold (dBm) for the PHY to detect the signal.",
+                    DoubleValue(-101.0),
+                    MakeDoubleAccessor(&WurMainRadioNetDevicePhy::SetRxSensitivity,
+                                       &WurMainRadioNetDevicePhy::GetRxSensitivity),
+                    MakeDoubleChecker<double>())
+                .AddAttribute("TxGain", "Transmission gain (dB).",
+                              DoubleValue(0.0),
+                              MakeDoubleAccessor(&WurMainRadioNetDevicePhy::SetTxGain,
+                                                 &WurMainRadioNetDevicePhy::GetTxGain),
+                              MakeDoubleChecker<double>())
+                .AddAttribute("RxGain", "Reception gain (dB).",
+                              DoubleValue(0.0),
+                              MakeDoubleAccessor(&WurMainRadioNetDevicePhy::SetRxGain,
+                                                 &WurMainRadioNetDevicePhy::GetRxGain),
+                              MakeDoubleChecker<double>());
+        return tid;
+}
 }  // namespace ns3
 

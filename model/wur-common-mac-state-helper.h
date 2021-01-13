@@ -2,6 +2,7 @@
 #define WUR_COMMON_MAC_STATE_HELPER_H
 
 #include "ns3/object.h"
+#include "ns3/node.h"
 namespace ns3 {
 class WurCommonMacStateHelper : public Object {
        public:

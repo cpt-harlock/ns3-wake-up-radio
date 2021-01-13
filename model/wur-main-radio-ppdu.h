@@ -20,7 +20,7 @@ class WurMainRadioPpdu : public SimpleRefCount<WurMainRadioPpdu> {
             : m_psdu(psdu),
               m_truncatedTx(false),
               m_headerLength(headerLength){};
-        virtual ~WurMainRadioPpdu();
+        virtual ~WurMainRadioPpdu(){};
 
         Ptr<WurMainRadioPsdu> GetPsdu(void) const;
 

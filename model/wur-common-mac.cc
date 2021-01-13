@@ -1,38 +1,50 @@
 #include "wur-common-mac.h"
+#include "wur-main-radio-net-device.h"
 #include "ns3/callback.h"
 #include "src/core/model/type-id.h"
 namespace ns3 {
 
 TypeId WurCommonMac::GetTypeId() {
-static TypeId tid = TypeId ("ns3::WurCommonMac")
-    .SetParent<Object> ()
-    .SetGroupName ("Wur")
-    .AddTraceSource ("MacTx",
-                     "A packet has been received from higher layers and is being processed in preparation for "
-                     "queueing for transmission.",
-                     MakeTraceSourceAccessor (&WurCommonMac::m_macTxTrace),
-                     "ns3::Packet::TracedCallback")
-    .AddTraceSource ("MacTxDrop",
-                     "A packet has been dropped in the MAC layer before transmission.",
-                     MakeTraceSourceAccessor (&WurCommonMac::m_macTxDropTrace),
-                     "ns3::Packet::TracedCallback")
-    .AddTraceSource ("MacPromiscRx",
-                     "A packet has been received by this device, has been passed up from the physical layer "
-                     "and is being forwarded up the local protocol stack.  This is a promiscuous trace.",
-                     MakeTraceSourceAccessor (&WurCommonMac::m_macPromiscRxTrace),
-                     "ns3::Packet::TracedCallback")
-    .AddTraceSource ("MacRx",
-                     "A packet has been received by this device, has been passed up from the physical layer "
-                     "and is being forwarded up the local protocol stack. This is a non-promiscuous trace.",
-                     MakeTraceSourceAccessor (&WurCommonMac::m_macRxTrace),
-                     "ns3::Packet::TracedCallback")
-    .AddTraceSource ("MacRxDrop",
-                     "A packet has been dropped in the MAC layer after it has been passed up from the physical layer.",
-                     MakeTraceSourceAccessor (&WurCommonMac::m_macRxDropTrace),
-                     "ns3::Packet::TracedCallback")
-  ;
-  return tid;
-
+        static TypeId tid =
+            TypeId("ns3::WurCommonMac")
+                .SetParent<Object>()
+                .SetGroupName("Wur")
+                .AddTraceSource(
+                    "MacTx",
+                    "A packet has been received from higher layers and is "
+                    "being processed in preparation for "
+                    "queueing for transmission.",
+                    MakeTraceSourceAccessor(&WurCommonMac::m_macTxTrace),
+                    "ns3::Packet::TracedCallback")
+                .AddTraceSource(
+                    "MacTxDrop",
+                    "A packet has been dropped in the MAC layer before "
+                    "transmission.",
+                    MakeTraceSourceAccessor(&WurCommonMac::m_macTxDropTrace),
+                    "ns3::Packet::TracedCallback")
+                .AddTraceSource(
+                    "MacPromiscRx",
+                    "A packet has been received by this device, has been "
+                    "passed up from the physical layer "
+                    "and is being forwarded up the local protocol stack.  This "
+                    "is a promiscuous trace.",
+                    MakeTraceSourceAccessor(&WurCommonMac::m_macPromiscRxTrace),
+                    "ns3::Packet::TracedCallback")
+                .AddTraceSource(
+                    "MacRx",
+                    "A packet has been received by this device, has been "
+                    "passed up from the physical layer "
+                    "and is being forwarded up the local protocol stack. This "
+                    "is a non-promiscuous trace.",
+                    MakeTraceSourceAccessor(&WurCommonMac::m_macRxTrace),
+                    "ns3::Packet::TracedCallback")
+                .AddTraceSource(
+                    "MacRxDrop",
+                    "A packet has been dropped in the MAC layer after it has "
+                    "been passed up from the physical layer.",
+                    MakeTraceSourceAccessor(&WurCommonMac::m_macRxDropTrace),
+                    "ns3::Packet::TracedCallback");
+        return tid;
 }
 
 void WurCommonMac::Initialize() {
@@ -115,22 +127,22 @@ void WurCommonMac::TimerDataSendingCallback() {
         TimerWurMechanismCallback();
 }
 
-void WurCommonMac::NotifyTx(Ptr<Packet> packet) {
-        m_macTxTrace (packet);
-}
+void WurCommonMac::NotifyTx(Ptr<Packet> packet) { m_macTxTrace(packet); }
 
-void WurCommonMac::SetMainRadioNetDevice(const Ptr<WurMainRadioNetDevice> device) { 
-        if(device != nullptr) {
+void WurCommonMac::SetMainRadioNetDevice(
+    const Ptr<WurMainRadioNetDevice> device) {
+        if (device != nullptr) {
                 m_mainRadioNetDevice = device;
-                m_mainRadioNetDevice->GetPhy()->SetReceiveOkCallback(MakeCallback(&WurCommonMac::OnDataRx, this));
+                m_mainRadioNetDevice->GetPhy()->SetReceiveOkCallback(
+                    MakeCallback(&WurCommonMac::OnDataRx, this));
         }
 }
-Ptr<WurMainRadioNetDevice> WurCommonMac::GetMainRadioNetDevice(void) const { 
+Ptr<WurMainRadioNetDevice> WurCommonMac::GetMainRadioNetDevice(void) const {
         return m_mainRadioNetDevice;
 }
 
-void WurCommonMac::SetWurNetDevice(const Ptr<WurNetDevice> device) { 
-        if(device != nullptr) {
+void WurCommonMac::SetWurNetDevice(const Ptr<WurNetDevice> device) {
+        if (device != nullptr) {
                 m_wurNetDevice = device;
         }
 }
@@ -138,6 +150,6 @@ void WurCommonMac::SetWurNetDevice(const Ptr<WurNetDevice> device) {
 Ptr<WurNetDevice> WurCommonMac::GetWurNetDevice(void) const {
         return m_wurNetDevice;
 }
-       
+
 }  // namespace ns3
 

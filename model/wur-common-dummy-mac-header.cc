@@ -3,7 +3,9 @@
 #include <bits/stdint-uintn.h>
 
 #include "ns3/buffer.h"
+#include "ns3/mac8-address.h"
 #include "ns3/type-id.h"
+#include "src/network/utils/address-utils.h"
 
 namespace ns3 {
 TypeId WurCommonDummyMacHeader::GetTypeId(void) {
@@ -22,13 +24,16 @@ uint32_t WurCommonDummyMacHeader::GetSerializedSize() const {
 };
 
 void WurCommonDummyMacHeader::Serialize(Buffer::Iterator start) const {
-        start.WriteU32(m_from);
-        start.WriteU32(m_to);
+        uint8_t temp;
+        m_from.CopyTo(&temp);
+        start.WriteU8(temp);
+        m_to.CopyTo(&temp);
+        start.WriteU8(temp);
 }
 uint32_t WurCommonDummyMacHeader::Deserialize(Buffer::Iterator start) {
         Buffer::Iterator i = start;
-        m_from = i.ReadU32();
-        m_to = i.ReadU32();
+        m_from = Mac8Address(i.ReadU8());
+        m_to = Mac8Address(i.ReadU8());
         return i.GetDistanceFrom(start);
 }
 

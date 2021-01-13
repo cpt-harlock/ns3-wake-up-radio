@@ -14,17 +14,27 @@
 #include "ns3/mobility-model.h"
 #include "ns3/net-device.h"
 #include "ns3/object.h"
+#include "ns3/wur-main-radio-psdu.h"
 #include "src/wifi/model/wifi-phy-state-helper.h"
 #include "wur-main-radio-net-device-phy-state-helper.h"
 namespace ns3 {
 class WurMainRadioNetDeviceChannel;
 
 class WurMainRadioNetDevicePhy : public Object {
+       private:
+        Ptr<NetDevice> m_netdevice;
+        Ptr<MobilityModel> m_mobility;
+        double m_rxGainDb;
+        double m_txGainDb;
+        double m_rxSensitivityDb;
+
+       protected:
+        Ptr<WurMainRadioNetDeviceChannel> m_channel;
        public:
         typedef Callback<void, Ptr<Packet> > RxOkCallback;
         static TypeId GetTypeId(void);
-        WurMainRadioNetDevicePhy();
-        virtual ~WurMainRadioNetDevicePhy();
+        WurMainRadioNetDevicePhy(){};
+        virtual ~WurMainRadioNetDevicePhy() {};
         Ptr<WurMainRadioNetDeviceChannel> GetChannel() const;
         Ptr<NetDevice> GetDevice() const;
         Ptr<MobilityModel> GetMobility() const;
@@ -33,21 +43,21 @@ class WurMainRadioNetDevicePhy : public Object {
         void SetChannel(Ptr<WurMainRadioNetDeviceChannel>);
         virtual void StartReceivePreamble(Ptr<WurMainRadioPpdu>,
                                           double rxPower) = 0;
-        virtual double GetRxGain() const = 0;
-        virtual double GetRxSensitivity() const = 0;
         bool IsAwake() const;
-        virtual void TurnOn();
-        virtual void TurnOff();
-        
+        virtual void TurnOn() = 0;
+        virtual void TurnOff() = 0;
+
         void NotifyRxBegin(Ptr<const WurMainRadioPpdu>);
         void NotifyRxDrop(Ptr<const WurMainRadioPpdu>, std::string);
         void NotifyRxEnd(Ptr<const WurMainRadioPpdu>);
         void NotifyTxBegin(Ptr<const WurMainRadioPpdu>, double);
         void NotifyTxDrop(Ptr<const WurMainRadioPpdu>);
         void NotifyTxEnd(Ptr<const WurMainRadioPpdu>);
-        
-        WurMainRadioNetDevicePhyStateHelper::MainRadioState_t GetState(void) ;
-        void SetState(WurMainRadioNetDevicePhyStateHelper::MainRadioState_t) ;
+
+        virtual void StartTx(Ptr<WurMainRadioPsdu>) = 0;
+
+        WurMainRadioNetDevicePhyStateHelper::MainRadioState_t GetState(void);
+        void SetState(WurMainRadioNetDevicePhyStateHelper::MainRadioState_t);
         void SetReceiveOkCallback(RxOkCallback);
         /**
          * \param callback the callback to invoke
@@ -58,6 +68,16 @@ class WurMainRadioNetDevicePhy : public Object {
          *        upon erroneous packet reception.
          */
         // void SetReceiveErrorCallback(RxErrorCallback callback);
+        //
+        void SetRxGain(double rxGainDb) { m_rxGainDb = rxGainDb; };
+        void SetTxGain(double txGainDb) { m_txGainDb = txGainDb; };
+        void SetRxSensitivity(double rxSensitivityDb) {
+                m_rxSensitivityDb = rxSensitivityDb;
+        };
+
+        double GetRxGain() const { return m_rxGainDb; };
+        double GetTxGain() const { return m_txGainDb; };
+        double GetRxSensitivity() const  { return m_rxSensitivityDb; };
 
        protected:
         // defining callback to be invoked when
@@ -65,12 +85,8 @@ class WurMainRadioNetDevicePhy : public Object {
         //
         // InterferenceHelper _interference;
 
-        RxOkCallback  m_rxOkCallback;
+        RxOkCallback m_rxOkCallback;
         Ptr<WurMainRadioNetDevicePhyStateHelper> m_stateHelper;
-       private:
-        Ptr<NetDevice> m_netdevice;
-        Ptr<MobilityModel> m_mobility;
-        Ptr<WurMainRadioNetDeviceChannel> m_channel;
 };
 }  // namespace ns3
 #endif

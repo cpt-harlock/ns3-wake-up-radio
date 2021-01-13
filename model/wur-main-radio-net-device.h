@@ -1,8 +1,9 @@
 #ifndef WUR_MAIN_RADIO_NET_DEVICE_H
 #define WUR_MAIN_RADIO_NET_DEVICE_H
 
-#include "wur-main-radio-net-device-channel.h"
 #include "ns3/net-device.h"
+#include "wur-common-mac.h"
+#include "wur-main-radio-net-device-channel.h"
 namespace ns3 {
 
 class WurMainRadioNetDevicePhy;
@@ -12,8 +13,8 @@ class WurMainRadioNetDevice : public NetDevice {
        public:
         static TypeId GetTypeId(void);
 
-        WurMainRadioNetDevice();
-        virtual ~WurMainRadioNetDevice();
+        WurMainRadioNetDevice() {};
+        virtual ~WurMainRadioNetDevice(){};
         void SetMac(const Ptr<WurCommonMac> mac);
         void SetPhy(const Ptr<WurMainRadioNetDevicePhy> phy);
         Ptr<WurCommonMac> GetMac(void) const;
@@ -27,30 +28,34 @@ class WurMainRadioNetDevice : public NetDevice {
         Address GetAddress(void) const;
         bool SetMtu(const uint16_t mtu);
         uint16_t GetMtu(void) const;
-        //bool IsLinkUp(void) const;
-        //void AddLinkChangeCallback(Callback<void> callback);
-        //virtual bool IsBroadcast(void) const = 0;
-        //virtual Address GetBroadcast(void) const = 0;
-        //virtual bool IsMulticast(void) const = 0;
-        //virtual Address GetMulticast(Ipv4Address multicastGroup) const = 0;
-        //virtual bool IsPointToPoint(void) const = 0;
-        //virtual bool IsBridge(void) const = 0;
         virtual bool Send(Ptr<Packet> packet, const Address& dest,
                           uint16_t protocolNumber);
         Ptr<Node> GetNode(void) const;
         void SetNode(const Ptr<Node> node);
-        //bool NeedsArp(void) const;
+        // bool NeedsArp(void) const;
         void SetReceiveCallback(NetDevice::ReceiveCallback cb);
-        //Address GetMulticast(Ipv6Address addr) const;
+        // Address GetMulticast(Ipv6Address addr) const;
         bool SendFrom(Ptr<Packet> packet, const Address& source,
                       const Address& dest, uint16_t protocolNumber);
         void SetPromiscReceiveCallback(PromiscReceiveCallback cb);
-        bool SupportsSendFrom(void) const;
+        bool SupportsSendFrom(void) const {return true; };
         void TurnOn(void) { m_phy->TurnOn(); }
         void TurnOff(void) { m_phy->TurnOff(); }
 
+        //TODO: do smthng
+        void AddLinkChangeCallback(Callback<void> callback) {};
+        bool IsBroadcast(void) const;
+        Address GetBroadcast(void) const;
+        bool IsMulticast(void) const;
+        Address GetMulticast(Ipv4Address multicastGroup) const;
+        Address GetMulticast(Ipv6Address multicastGroup) const;
+        bool IsPointToPoint(void) const;
+        bool IsBridge(void) const;
+        bool NeedsArp() const;
+        bool IsLinkUp() const;
+
        protected:
-        virtual void CompleteConfig(void) = 0;
+        virtual void CompleteConfig(void);
 
        private:
         // max size of MAC Service Data Unit

@@ -12,7 +12,7 @@ NS_LOG_COMPONENT_DEFINE("WurMainRadioNetDeviceDummyPhy");
 
 void WurMainRadioNetDeviceDummyPhy::StartReceivePreamble(
     Ptr<WurMainRadioPpdu> ppdu, double rxPowerW) {
-        NS_LOG_FUNCTION(this << *ppdu << rxPowerW);
+        //NS_LOG_FUNCTION(this << *ppdu << rxPowerW);
         // Ptr<const WurMainRadioPpdu> psdu = ppdu->GetPsdu();
         // Ptr<Event> event =
         // m_interference.Add(ppdu, txVector, rxDuration, rxPowerW);
@@ -121,7 +121,8 @@ void WurMainRadioNetDeviceDummyPhy::StartReceivePreamble(
 
 void WurMainRadioNetDeviceDummyPhy::StartRx(Ptr<WurMainRadioPpdu> ppdu,
                                             double rxPowerW) {
-        NS_LOG_FUNCTION(this << *ppdu << rxPowerW);
+        //TODO: implement operator for ppdu 
+        //NS_LOG_FUNCTION(this << *ppdu << rxPowerW);
         NS_LOG_DEBUG("sync to signal (power=" << rxPowerW << "W)");
         SetState(WurMainRadioNetDevicePhyStateHelper::RX);
         // fixed preamble duration
@@ -136,7 +137,7 @@ void WurMainRadioNetDeviceDummyPhy::StartRx(Ptr<WurMainRadioPpdu> ppdu,
 
 void WurMainRadioNetDeviceDummyPhy::StartReceiveHeader(
     Ptr<WurMainRadioPpdu> ppdu) {
-        NS_LOG_FUNCTION(this << *ppdu);
+        //NS_LOG_FUNCTION(this << *ppdu);
         NotifyRxBegin(ppdu);
         Time headerDuration =
             Seconds((double)ppdu->GetPpduHeaderLength() / BIT_PER_SECONDS);
@@ -147,7 +148,7 @@ void WurMainRadioNetDeviceDummyPhy::StartReceiveHeader(
 
 void WurMainRadioNetDeviceDummyPhy::StartReceivePayload(
     Ptr<WurMainRadioPsdu> psdu) {
-        NS_LOG_FUNCTION(this << *psdu);
+        //NS_LOG_FUNCTION(this << *psdu);
         Time payloadDuration =
             Seconds((psdu->GetPacket()->GetSize() * 8.0) / BIT_PER_SECONDS);
         Simulator::Schedule(payloadDuration,
@@ -157,9 +158,10 @@ void WurMainRadioNetDeviceDummyPhy::StartReceivePayload(
 }
 void WurMainRadioNetDeviceDummyPhy::EndReceivePayload(
     Ptr<WurMainRadioPsdu> psdu) {
-        NS_LOG_FUNCTION(this << *psdu);
+        //NS_LOG_FUNCTION(this << *psdu);
         // trace rx end
-        NotifyRxEnd(psdu);
+        //TODO: why we have psdu?
+        //NotifyRxEnd(psdu);
         SetState(WurMainRadioNetDevicePhyStateHelper::IDLE);
         // removing current receiving packet
         currentRxPacket = nullptr;
@@ -184,4 +186,11 @@ void WurMainRadioNetDeviceDummyPhy::TurnOff() {
         }
 }
 
+void WurMainRadioNetDeviceDummyPhy::StartTx(Ptr<WurMainRadioPsdu> psdu) {
+        //create a ppdu
+        WurMainRadioPpdu temp(psdu,5);
+        Ptr<WurMainRadioPpdu> ppdu(&temp);
+        m_channel->Send(this, ppdu, 19);
+}
+        
 }  // namespace ns3

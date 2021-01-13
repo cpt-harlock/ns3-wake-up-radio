@@ -4,6 +4,9 @@
 
 #include "contrib/wake-up-radio/model/wur-common-dummy-mac-header.h"
 #include "contrib/wake-up-radio/model/wur-main-radio-net-device-phy.h"
+#include "ns3/address.h"
+#include "ns3/mac48-address.h"
+#include "ns3/mac8-address.h"
 #include "ns3/node.h"
 #include "ns3/pointer.h"
 #include "ns3/type-id.h"
@@ -54,9 +57,9 @@ bool WurMainRadioNetDevice::SetMtu(const uint16_t mtu) {
         return true;
 }
 
-// bool WurMainRadioNetDevice::IsLinkUp() const {
-//        return m_phy != 0 && m_phy->IsAwake();
-//}
+bool WurMainRadioNetDevice::IsLinkUp() const {
+        return m_phy != 0 && m_phy->IsAwake();
+}
 // void WurMainRadioNetDevice::AddLinkChangeCallback(Callback<void> callback) {
 //        m_linkChanges.ConnectWithoutContext(callback);
 //}
@@ -91,35 +94,75 @@ TypeId WurMainRadioNetDevice::GetTypeId() {
                 //                         &WifiNetDevice::GetMtu),
                 //    MakeUintegerChecker<uint16_t>(
                 //        1, MAX_MSDU_SIZE - LLC_SNAP_HEADER_LENGTH))
-                .AddAttribute("Channel", "The channel attached to this device",
-                              PointerValue(),
-                              MakePointerAccessor(&WurMainRadioNetDevice::GetChannel),
-                              MakePointerChecker<Channel>())
-                .AddAttribute("Phy", "The PHY layer attached to this device.",
-                              PointerValue(),
-                              MakePointerAccessor(&WurMainRadioNetDevice::GetPhy,
-                                                  &WurMainRadioNetDevice::SetPhy),
-                              MakePointerChecker<WurMainRadioNetDevicePhy>())
-                .AddAttribute("Mac", "The MAC layer attached to this device.",
-                              PointerValue(),
-                              MakePointerAccessor(&WurMainRadioNetDevice::GetMac,
-                                                  &WurMainRadioNetDevice::SetMac),
-                              MakePointerChecker<WurCommonMac>());
+                .AddAttribute(
+                    "Channel", "The channel attached to this device",
+                    PointerValue(),
+                    MakePointerAccessor(&WurMainRadioNetDevice::GetChannel),
+                    MakePointerChecker<Channel>())
+                .AddAttribute(
+                    "Phy", "The PHY layer attached to this device.",
+                    PointerValue(),
+                    MakePointerAccessor(&WurMainRadioNetDevice::GetPhy,
+                                        &WurMainRadioNetDevice::SetPhy),
+                    MakePointerChecker<WurMainRadioNetDevicePhy>())
+                .AddAttribute(
+                    "Mac", "The MAC layer attached to this device.",
+                    PointerValue(),
+                    MakePointerAccessor(&WurMainRadioNetDevice::GetMac,
+                                        &WurMainRadioNetDevice::SetMac),
+                    MakePointerChecker<WurCommonMac>());
         return tid;
 }
 bool WurMainRadioNetDevice::Send(Ptr<Packet> packet, const Address &dest,
                                  uint16_t protocolNumber) {
-        NS_LOG_FUNCTION(this << packet << dest << protocolNumber);
-        NS_ASSERT(Mac48Address::IsMatchingType(dest));
+        return SendFrom(packet, GetAddress(), dest, protocolNumber);
+}
 
-        Mac48Address realTo = Mac48Address::ConvertFrom(dest);
+bool WurMainRadioNetDevice::SendFrom(Ptr<Packet> packet, const Address &source,
+                                     const Address &dest,
+                                     uint16_t protocolNumber) {
+        NS_LOG_FUNCTION(this << packet << dest << protocolNumber);
+        NS_ASSERT(Mac8Address::IsMatchingType(dest));
+
+        Mac8Address realTo = Mac8Address::ConvertFrom(dest);
+        Mac8Address realFrom = Mac8Address::ConvertFrom(source);
 
         WurCommonDummyMacHeader macHeader;
-        //macHeader.SetFrom(GetAddress().
+        macHeader.SetTo(realTo);
+        macHeader.SetFrom(realFrom);
+        packet->AddHeader(macHeader);
 
         m_mac->NotifyTx(packet);
         m_mac->Enqueue(packet, realTo);
         return true;
 }
+void WurMainRadioNetDevice::CompleteConfig(void) {
+        if (m_mac == 0 || m_phy == 0 || m_node == 0 || m_configComplete) {
+                return;
+        }
+        m_mac->SetMainRadioNetDevice(this);
+        m_configComplete = true;
+}
 
+bool WurMainRadioNetDevice::IsBroadcast() const { return true; }
+
+Address WurMainRadioNetDevice::GetBroadcast() const {
+        return Mac48Address::GetBroadcast();
+}
+
+bool WurMainRadioNetDevice::IsMulticast() const { return false; }
+
+Address WurMainRadioNetDevice::GetMulticast(Ipv4Address multicastGroup) const {
+        return Mac48Address::GetMulticast(multicastGroup);
+}
+
+bool WurMainRadioNetDevice::IsPointToPoint() const { return false; }
+
+Address WurMainRadioNetDevice::GetMulticast(Ipv6Address multicastGroup) const {
+        return Mac48Address::GetMulticast(multicastGroup);
+}
+
+bool WurMainRadioNetDevice::IsBridge() const { return false; }
+
+bool WurMainRadioNetDevice::NeedsArp() const { return false; }
 }  // namespace ns3
