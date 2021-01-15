@@ -6,6 +6,9 @@
 #include "wur-common-mac.h"
 namespace ns3 {
 class WurCommonDummyMac : public WurCommonMac {
+        public:
+        WurCommonDummyMac()  {}
+        virtual ~WurCommonDummyMac() {}
         void StartWurMechanism();
         void OnDataRx(Ptr<Packet>);
         void SetPromisc();

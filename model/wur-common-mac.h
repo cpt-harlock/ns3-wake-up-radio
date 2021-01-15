@@ -10,7 +10,6 @@
  */
 
 #include "wur-common-mac-state-helper.h"
-#include "wur-main-radio-net-device-phy.h"
 #include "ns3/traced-callback.h"
 #include "ns3/wur-net-device.h"
 #include "ns3/nstime.h"
@@ -20,10 +19,11 @@ namespace ns3 {
 
 class Address;
 class WurMainRadioNetDevice;
-
+class WurMainRadioNetDevicePhy;
 class WurCommonMac : public Object {
        public:
-               WurCommonMac() : Object(), wurSendingTimer(), dataSendingTimer() , dataReceivingTimer(), m_stateHelper(), m_txqueue() {
+               WurCommonMac() : Object(), m_txqueue(), wurSendingTimer(), dataSendingTimer() , dataReceivingTimer() {
+                       m_stateHelper = CreateObject<WurCommonMacStateHelper>();
                        Initialize();
                };
         virtual void SetPromisc(void) = 0;
@@ -33,6 +33,7 @@ class WurCommonMac : public Object {
         //TODO: reset main and wur device functions
         //TODO: add listeners for phy events
         void SetMainRadioNetDevice(const Ptr<WurMainRadioNetDevice> device);
+        void SetMainRadioPhy(const Ptr<WurMainRadioNetDevicePhy> phy);
         Ptr<WurMainRadioNetDevice> GetMainRadioNetDevice(void) const;
         void SetWurNetDevice(const Ptr<WurNetDevice> device);
         Ptr<WurNetDevice> GetWurNetDevice(void) const;
@@ -54,12 +55,12 @@ class WurCommonMac : public Object {
         Ptr<WurMainRadioNetDevice> m_mainRadioNetDevice;
         Ptr<WurNetDevice> m_wurNetDevice;
         std::vector<Ptr<Packet>> m_txqueue;
+        Ptr<WurCommonMacStateHelper> m_stateHelper;
        private:
         Timer wurSendingTimer;
         Timer dataSendingTimer;
         Timer dataReceivingTimer;
-        Ptr<WurCommonMacStateHelper> m_stateHelper;
-        const Time WUR_MECHANISM_TIMEOUT = MilliSeconds(20);
+        const Time WUR_MECHANISM_TIMEOUT = MilliSeconds(10);
         const Time DATA_RECEPTION_TIMEOUT = MilliSeconds(50);
         const Time DATA_TRANSMISSION_TIMEOUT = MilliSeconds(50);
         TracedCallback<Ptr<const Packet>> m_macTxTrace;

@@ -15,12 +15,13 @@ class WurMainRadioNetDeviceDummyPhy : public WurMainRadioNetDevicePhy {
         void StartReceiveHeader(Ptr<WurMainRadioPpdu>);
         void StartReceivePayload(Ptr<WurMainRadioPsdu>);
         void EndReceivePayload(Ptr<WurMainRadioPsdu>);
+        void EndTx( WurMainRadioPpdu);
         void TurnOn();
         void TurnOff();
         virtual void StartTx(Ptr<WurMainRadioPsdu>);
 
        private:
-        const uint BIT_PER_SECONDS =  1000;
+        const uint BIT_PER_SECONDS =  1000000;
         const Time PREAMBLE_DURATION = MilliSeconds(1);
         Ptr<WurMainRadioPpdu> currentRxPacket;
         Ptr<WurMainRadioPpdu> currentTxPacket;

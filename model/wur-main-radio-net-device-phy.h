@@ -9,7 +9,6 @@
  * Other things should be implemented in extending classes.
  */
 
-#include "contrib/wake-up-radio/model/wur-main-radio-ppdu.h"
 #include "ns3/interference-helper.h"
 #include "ns3/mobility-model.h"
 #include "ns3/net-device.h"
@@ -17,12 +16,15 @@
 #include "ns3/wur-main-radio-psdu.h"
 #include "src/wifi/model/wifi-phy-state-helper.h"
 #include "wur-main-radio-net-device-phy-state-helper.h"
+#include "wur-main-radio-ppdu.h"
+
 namespace ns3 {
 class WurMainRadioNetDeviceChannel;
+class WurCommonMac;
+class WurMainRadioNetDevice;
 
 class WurMainRadioNetDevicePhy : public Object {
        private:
-        Ptr<NetDevice> m_netdevice;
         Ptr<MobilityModel> m_mobility;
         double m_rxGainDb;
         double m_txGainDb;
@@ -30,15 +32,21 @@ class WurMainRadioNetDevicePhy : public Object {
 
        protected:
         Ptr<WurMainRadioNetDeviceChannel> m_channel;
+        Ptr<WurMainRadioNetDevice> m_netdevice;
+
        public:
         typedef Callback<void, Ptr<Packet> > RxOkCallback;
+        typedef Callback<void, Ptr<Packet> > TxOkCallback;
         static TypeId GetTypeId(void);
-        WurMainRadioNetDevicePhy(){};
-        virtual ~WurMainRadioNetDevicePhy() {};
+        WurMainRadioNetDevicePhy() {
+                m_stateHelper =
+                    CreateObject<WurMainRadioNetDevicePhyStateHelper>();
+        };
+        virtual ~WurMainRadioNetDevicePhy(){};
         Ptr<WurMainRadioNetDeviceChannel> GetChannel() const;
         Ptr<NetDevice> GetDevice() const;
         Ptr<MobilityModel> GetMobility() const;
-        void SetDevice(Ptr<NetDevice>);
+        void SetDevice(Ptr<WurMainRadioNetDevice>);
         void SetMobility(Ptr<MobilityModel>);
         void SetChannel(Ptr<WurMainRadioNetDeviceChannel>);
         virtual void StartReceivePreamble(Ptr<WurMainRadioPpdu>,
@@ -59,6 +67,8 @@ class WurMainRadioNetDevicePhy : public Object {
         WurMainRadioNetDevicePhyStateHelper::MainRadioState_t GetState(void);
         void SetState(WurMainRadioNetDevicePhyStateHelper::MainRadioState_t);
         void SetReceiveOkCallback(RxOkCallback);
+        void SetTxOkCallback(TxOkCallback);
+        void EndTx(Ptr<WurMainRadioPpdu>);
         /**
          * \param callback the callback to invoke
          *        upon successful packet reception.
@@ -77,7 +87,7 @@ class WurMainRadioNetDevicePhy : public Object {
 
         double GetRxGain() const { return m_rxGainDb; };
         double GetTxGain() const { return m_txGainDb; };
-        double GetRxSensitivity() const  { return m_rxSensitivityDb; };
+        double GetRxSensitivity() const { return m_rxSensitivityDb; };
 
        protected:
         // defining callback to be invoked when
@@ -86,6 +96,7 @@ class WurMainRadioNetDevicePhy : public Object {
         // InterferenceHelper _interference;
 
         RxOkCallback m_rxOkCallback;
+        TxOkCallback m_txOkCallback;
         Ptr<WurMainRadioNetDevicePhyStateHelper> m_stateHelper;
 };
 }  // namespace ns3

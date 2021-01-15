@@ -2,15 +2,17 @@
 
 #include <bits/stdint-uintn.h>
 
-#include "contrib/wake-up-radio/model/wur-common-dummy-mac-header.h"
-#include "contrib/wake-up-radio/model/wur-main-radio-net-device-phy.h"
+#include "wur-common-mac.h"
+#include "wur-common-dummy-mac-header.h"
+#include "wur-main-radio-net-device-phy.h"
 #include "ns3/address.h"
 #include "ns3/mac48-address.h"
 #include "ns3/mac8-address.h"
 #include "ns3/node.h"
 #include "ns3/pointer.h"
 #include "ns3/type-id.h"
-#include "wur-common-mac.h"
+#include "wur-main-radio-net-device-channel.h"
+
 
 namespace ns3 {
 

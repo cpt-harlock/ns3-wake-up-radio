@@ -2,12 +2,16 @@
 
 #include <string>
 
-#include "contrib/wake-up-radio/model/wur-main-radio-net-device-channel.h"
-#include "contrib/wake-up-radio/model/wur-main-radio-net-device-phy-state-helper.h"
-#include "contrib/wake-up-radio/model/wur-main-radio-ppdu.h"
+#include "ns3/assert.h"
+#include "wur-main-radio-net-device.h"
+#include "wur-main-radio-net-device-channel.h"
+#include "wur-main-radio-net-device-phy-state-helper.h"
+#include "wur-main-radio-ppdu.h"
 #include "ns3/double.h"
 #include "ns3/mobility-model.h"
 #include "ns3/net-device.h"
+#include "src/core/model/simulator.h"
+#include "wur-common-mac.h"
 namespace ns3 {
 Ptr<MobilityModel> WurMainRadioNetDevicePhy::GetMobility() const {
         return m_mobility;
@@ -33,7 +37,7 @@ void WurMainRadioNetDevicePhy::SetMobility(Ptr<MobilityModel> mobility) {
         m_mobility = mobility;
 }
 
-void WurMainRadioNetDevicePhy::SetDevice(Ptr<NetDevice> device) {
+void WurMainRadioNetDevicePhy::SetDevice(Ptr<WurMainRadioNetDevice> device) {
         m_netdevice = device;
 }
 
@@ -42,8 +46,15 @@ void WurMainRadioNetDevicePhy::NotifyTxBegin(Ptr<const WurMainRadioPpdu> psdu,
         // m_phyTxBeginTrace (psdu, txPowerW);
 }
 
-void WurMainRadioNetDevicePhy::NotifyTxEnd(Ptr<const WurMainRadioPpdu> psdu) {
-        // m_phyTxEndTrace (mpdu->GetProtocolDataUnit ());
+void WurMainRadioNetDevicePhy::SetTxOkCallback(TxOkCallback txOkCallback) {
+        m_txOkCallback = txOkCallback;
+}
+
+void WurMainRadioNetDevicePhy::NotifyTxEnd(Ptr<const WurMainRadioPpdu> ppdu) {
+        NS_ASSERT(ppdu != nullptr);
+        NS_ASSERT(ppdu->GetPsdu() != nullptr);
+        NS_ASSERT(ppdu->GetPsdu()->GetPacket() != nullptr);
+        m_txOkCallback(ppdu->GetPsdu()->GetPacket());
 }
 
 void WurMainRadioNetDevicePhy::NotifyTxDrop(Ptr<const WurMainRadioPpdu> psdu) {
@@ -113,6 +124,13 @@ TypeId WurMainRadioNetDevicePhy::GetTypeId(void) {
                                                  &WurMainRadioNetDevicePhy::GetRxGain),
                               MakeDoubleChecker<double>());
         return tid;
+}
+
+void WurMainRadioNetDevicePhy::EndTx(Ptr<WurMainRadioPpdu> ppdu) {
+        //change state to idle
+        std::cout << Now().GetSeconds() << " WurMainRadioNetDevicePhy::EndTx" << std::endl;
+        SetState(WurMainRadioNetDevicePhyStateHelper::IDLE);
+        NotifyTxEnd(ppdu);
 }
 }  // namespace ns3
 

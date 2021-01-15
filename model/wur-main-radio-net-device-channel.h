@@ -11,6 +11,7 @@ namespace ns3 {
 /**
  * \brief no cazz
  */
+class WurMainRadioNetDevice;
 class WurMainRadioNetDeviceChannel : public Channel {
        public:
         static TypeId GetTypeId(void);

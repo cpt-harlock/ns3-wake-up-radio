@@ -2,12 +2,11 @@
 #define WUR_MAIN_RADIO_NET_DEVICE_H
 
 #include "ns3/net-device.h"
-#include "wur-common-mac.h"
-#include "wur-main-radio-net-device-channel.h"
+#include "wur-main-radio-net-device-phy.h"
 namespace ns3 {
 
-class WurMainRadioNetDevicePhy;
 class WurCommonMac;
+class WurMainRadioNetDeviceChannel;
 
 class WurMainRadioNetDevice : public NetDevice {
        public:

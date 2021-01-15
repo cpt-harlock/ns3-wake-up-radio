@@ -13,7 +13,10 @@
 #include "ns3/node.h"
 #include "ns3/pointer.h"
 #include "ns3/simulator.h"
+#include "src/core/model/simulator.h"
 #include "src/wifi/model/wifi-utils.h"
+#include "wur-main-radio-net-device.h"
+#include "wur-common-mac.h"
 
 namespace ns3 {
 
@@ -76,6 +79,7 @@ void WurMainRadioNetDeviceChannel::Send(Ptr<WurMainRadioNetDevicePhy> sender,
                                         Ptr<const WurMainRadioPpdu> ppdu,
                                         double txPowerDbm) const {
         NS_LOG_FUNCTION(this << sender << ppdu << txPowerDbm);
+        std::cout << Now().GetSeconds() <<  " WurMainRadioNetDeviceChannel::Send" << std::endl;
         Ptr<MobilityModel> senderMobility = sender->GetMobility();
         NS_ASSERT(senderMobility != 0);
         for (PhyList::const_iterator i = m_phyList.begin();

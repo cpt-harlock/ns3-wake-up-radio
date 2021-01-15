@@ -17,12 +17,12 @@ class WurMainRadioPpdu : public SimpleRefCount<WurMainRadioPpdu> {
        public:
         WurMainRadioPpdu(Ptr<WurMainRadioPsdu> psdu,
                          uint32_t headerLength)
-            : m_psdu(psdu),
-              m_truncatedTx(false),
-              m_headerLength(headerLength){};
+            : m_truncatedTx(false),
+              m_headerLength(headerLength){ m_psdu = psdu;};
         virtual ~WurMainRadioPpdu(){};
 
         Ptr<WurMainRadioPsdu> GetPsdu(void) const;
+
 
         bool IsTruncatedTx(void) const { return m_truncatedTx; }
         bool IsTruncatedRx(void) const { return m_truncatedRx; }
