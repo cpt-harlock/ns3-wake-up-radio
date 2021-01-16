@@ -29,11 +29,15 @@ class WurMainRadioNetDeviceChannel : public Channel {
         /**
          * \param loss the new propagation loss model.
          */
-        void SetPropagationLossModel(const Ptr<PropagationLossModel> loss);
+        void SetPropagationLossModel(const Ptr<PropagationLossModel> loss) {
+                m_loss = loss;
+        }
         /**
          * \param delay the new propagation delay model.
          */
-        void SetPropagationDelayModel(const Ptr<PropagationDelayModel> delay);
+        void SetPropagationDelayModel(const Ptr<PropagationDelayModel> delay) {
+                m_delay = delay;
+        }
 
         /**
          * \param sender the PHY object from which the packet is originating.

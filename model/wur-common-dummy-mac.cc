@@ -21,6 +21,8 @@ void WurCommonDummyMac::StartWurMechanism() {
 
 void WurCommonDummyMac::OnDataRx(Ptr<Packet> packet) {
         //se lo mettemo in saccoccia
+        std::cout << Now().GetSeconds() << "WurCommonDummyMac::OnDataRx successfully received packet" << packet->GetSerializedSize() << std::endl;
+        
         NS_LOG_INFO("MAC received packet"); 
 }
         
