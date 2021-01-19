@@ -1,4 +1,4 @@
-#include "contrib/wake-up-radio/model/wur-main-radio-ppdu.h"
+#include "wur-main-radio-ppdu.h"
 namespace ns3 {
 NS_LOG_COMPONENT_DEFINE("WurMainRadioPpdu");
 class WurMainRadioPsdu;

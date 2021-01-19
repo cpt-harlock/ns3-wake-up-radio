@@ -1,4 +1,4 @@
-#include "contrib/wake-up-radio/model/wur-main-radio-net-device-phy.h"
+#include "wur-main-radio-net-device-phy.h"
 
 #include <string>
 
@@ -10,7 +10,7 @@
 #include "ns3/double.h"
 #include "ns3/mobility-model.h"
 #include "ns3/net-device.h"
-#include "src/core/model/simulator.h"
+#include "ns3/simulator.h"
 #include "wur-common-mac.h"
 namespace ns3 {
 Ptr<MobilityModel> WurMainRadioNetDevicePhy::GetMobility() const {

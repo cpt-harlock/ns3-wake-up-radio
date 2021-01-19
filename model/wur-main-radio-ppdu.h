@@ -5,7 +5,7 @@
 
 #include "ns3/packet.h"
 #include "ns3/simple-ref-count.h"
-#include "ns3/wur-main-radio-psdu.h"
+#include "wur-main-radio-psdu.h"
 namespace ns3 {
 
 class WurMainRadioPsdu;

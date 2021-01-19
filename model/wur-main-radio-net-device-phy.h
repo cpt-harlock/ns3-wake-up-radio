@@ -14,7 +14,7 @@
 #include "ns3/net-device.h"
 #include "ns3/object.h"
 #include "ns3/wur-main-radio-psdu.h"
-#include "src/wifi/model/wifi-phy-state-helper.h"
+#include "ns3/wifi-phy-state-helper.h"
 #include "wur-main-radio-net-device-phy-state-helper.h"
 #include "wur-main-radio-ppdu.h"
 

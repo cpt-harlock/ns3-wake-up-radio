@@ -4,7 +4,7 @@
 #include "ns3/object.h"
 #include "ns3/scheduler.h"
 #include "ns3/simulator.h"
-#include "src/wifi/model/wifi-phy-state.h"
+#include "ns3/wifi-phy-state.h"
 #include "wur-common-mac.h"
 #include "wur-main-radio-net-device-channel.h"
 #include "wur-main-radio-net-device-phy-state-helper.h"

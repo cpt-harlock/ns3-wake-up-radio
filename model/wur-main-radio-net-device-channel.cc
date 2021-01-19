@@ -4,8 +4,8 @@
 
 #include <algorithm>
 
-#include "contrib/wake-up-radio/model/wur-main-radio-net-device-phy.h"
-#include "contrib/wake-up-radio/model/wur-main-radio-ppdu.h"
+#include "wur-main-radio-net-device-phy.h"
+#include "wur-main-radio-ppdu.h"
 #include "ns3/log-macros-enabled.h"
 #include "ns3/log.h"
 #include "ns3/mobility-model.h"
@@ -13,8 +13,8 @@
 #include "ns3/node.h"
 #include "ns3/pointer.h"
 #include "ns3/simulator.h"
-#include "src/core/model/simulator.h"
-#include "src/wifi/model/wifi-utils.h"
+#include "ns3/simulator.h"
+#include "ns3/wifi-utils.h"
 #include "wur-common-mac.h"
 #include "wur-main-radio-net-device.h"
 

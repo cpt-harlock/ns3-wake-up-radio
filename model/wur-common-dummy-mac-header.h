@@ -5,7 +5,7 @@
 
 #include "ns3/header.h"
 #include "ns3/mac8-address.h"
-#include "src/network/utils/ipv6-address.h"
+#include "ns3/ipv6-address.h"
 
 namespace ns3 {
 class WurCommonDummyMacHeader : public Header {

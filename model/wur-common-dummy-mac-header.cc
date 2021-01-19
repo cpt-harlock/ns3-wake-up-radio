@@ -5,7 +5,7 @@
 #include "ns3/buffer.h"
 #include "ns3/mac8-address.h"
 #include "ns3/type-id.h"
-#include "src/network/utils/address-utils.h"
+#include "ns3/address-utils.h"
 
 namespace ns3 {
 TypeId WurCommonDummyMacHeader::GetTypeId(void) {

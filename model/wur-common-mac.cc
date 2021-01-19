@@ -1,8 +1,8 @@
 #include "wur-common-mac.h"
 
-#include "contrib/wake-up-radio/model/wur-common-mac-state-helper.h"
+#include "wur-common-mac-state-helper.h"
 #include "ns3/callback.h"
-#include "src/core/model/type-id.h"
+#include "ns3/type-id.h"
 #include "wur-main-radio-net-device-channel.h"
 #include "wur-main-radio-net-device.h"
 namespace ns3 {
