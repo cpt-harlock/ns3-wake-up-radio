@@ -1,4 +1,5 @@
 #include "wur-common-dummy-mac.h"
+#include "ns3/log-macros-enabled.h"
 #include "ns3/mac8-address.h"
 #include "ns3/object.h"
 #include "ns3/wur-main-radio-psdu.h"
@@ -7,6 +8,7 @@
 #include "wur-main-radio-net-device-phy.h"
 #include "wur-main-radio-net-device.h"
 #include "wur-main-radio-net-device-channel.h"
+#include <string>
 
 NS_LOG_COMPONENT_DEFINE("WurCommonDummyMac");
 
@@ -15,14 +17,13 @@ void WurCommonDummyMac::StartWurMechanism() {
         //TODO: send a wur packet? 
         //TODO: for now, dummy implementation
         m_stateHelper->SetState(WurCommonMacStateHelper::SENDING_WUR_MESSAGE);
-        std::cout << Now().GetSeconds() << " WurCommonDummyMac::StartWurMechanism" << std::endl;
+	NS_LOG_FUNCTION_NOARGS();
         OnWurMechanismSuccess();
 }
 
 void WurCommonDummyMac::OnDataRx(Ptr<Packet> packet) {
         //se lo mettemo in saccoccia
-        std::cout << Now().GetSeconds() << "WurCommonDummyMac::OnDataRx successfully received packet" << packet->GetSerializedSize() << std::endl;
-        
+       NS_LOG_FUNCTION(packet);
         NS_LOG_INFO("MAC received packet"); 
 }
         
@@ -43,7 +44,7 @@ void WurCommonDummyMac::StartDataTx() {
         if(m_mainRadioPhy->GetState() == WurMainRadioNetDevicePhyStateHelper::IDLE) {
                 Ptr<Packet> packet = m_txqueue.front();
                 m_txqueue.erase(m_txqueue.begin());
-                std::cout << Now().GetSeconds() << " WurCommonDummyMac::StartDataTx m_txqueue size " << m_txqueue.size() << std::endl;
+                NS_LOG_INFO(" WurCommonDummyMac::StartDataTx m_txqueue size " + std::to_string(m_txqueue.size()));
                 Ptr<WurMainRadioPsdu> psdu = Create<WurMainRadioPsdu>(packet);
                 m_mainRadioPhy->StartTx(psdu);
         }

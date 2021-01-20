@@ -28,7 +28,8 @@ class WurMainRadioNetDevicePhy : public Object {
         Ptr<MobilityModel> m_mobility;
         double m_rxGainDb;
         double m_txGainDb;
-        double m_rxSensitivityDb;
+        double m_rxSensitivityDbm;
+	double m_txPowerDbm;
 
        protected:
         Ptr<WurMainRadioNetDeviceChannel> m_channel;
@@ -81,14 +82,17 @@ class WurMainRadioNetDevicePhy : public Object {
         //
         void SetRxGain(double rxGainDb) { m_rxGainDb = rxGainDb; };
         void SetTxGain(double txGainDb) { m_txGainDb = txGainDb; };
-        void SetRxSensitivity(double rxSensitivityDb) {
-                m_rxSensitivityDb = rxSensitivityDb;
+        void SetRxSensitivity(double rxSensitivityDbm) {
+                m_rxSensitivityDbm = rxSensitivityDbm;
         };
+
+	void SetTxPower(double txPowerDbm) { m_txPowerDbm = txPowerDbm; } 
 
         double GetRxGain() const { return m_rxGainDb; };
         double GetTxGain() const { return m_txGainDb; };
-        double GetRxSensitivity() const { return m_rxSensitivityDb; };
+        double GetRxSensitivity() const { return m_rxSensitivityDbm; };
 
+	double GetTxPower() { return m_txPowerDbm; } 
        protected:
         // defining callback to be invoked when
         // the channel pass a packet to th PHY

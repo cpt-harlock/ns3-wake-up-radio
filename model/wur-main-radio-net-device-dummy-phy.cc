@@ -1,5 +1,6 @@
 #include "wur-main-radio-net-device-dummy-phy.h"
 
+#include "ns3/log-macros-enabled.h"
 #include "ns3/nstime.h"
 #include "ns3/object.h"
 #include "ns3/scheduler.h"
@@ -17,10 +18,7 @@ NS_LOG_COMPONENT_DEFINE("WurMainRadioNetDeviceDummyPhy");
 
 void WurMainRadioNetDeviceDummyPhy::StartReceivePreamble(
     Ptr<WurMainRadioPpdu> ppdu, double rxPowerW) {
-        std::cout << Now().GetSeconds()
-                  << " WurMainRadioNetDeviceDummyPhy::StartReceivePreamble"
-                  << std::endl;
-        // NS_LOG_FUNCTION(this << *ppdu << rxPowerW);
+        NS_LOG_FUNCTION(this << rxPowerW);
         // Ptr<const WurMainRadioPpdu> psdu = ppdu->GetPsdu();
         // Ptr<Event> event =
         // m_interference.Add(ppdu, txVector, rxDuration, rxPowerW);
@@ -39,7 +37,6 @@ void WurMainRadioNetDeviceDummyPhy::StartReceivePreamble(
                 NS_LOG_DEBUG(
                     "Packet reception stopped because transmitter has been "
                     "switched off");
-                std::cout << Now().GetSeconds() << " WurMainRadioNetDeviceDummyPhy::StartReceivePreamble packet truncated " << std::endl;
                 // if (endRx > (Simulator::Now() +
                 // m_state->GetDelayUntilIdle())) {
                 //        MaybeCcaBusyDuration();
@@ -50,7 +47,6 @@ void WurMainRadioNetDeviceDummyPhy::StartReceivePreamble(
         switch (GetState()) {
                 case WurMainRadioNetDevicePhyStateHelper::RX:
 
-                        std::cout << Now().GetSeconds() << " WurMainRadioNetDeviceDummyPhy::StartReceivePreamble already receiving packet" << std::endl;
                         NS_LOG_DEBUG("Drop packet because already in Rx (power="
                                      << rxPowerW << "W)");
                         NotifyRxDrop(ppdu, "Already receiving packet");
@@ -65,7 +61,6 @@ void WurMainRadioNetDeviceDummyPhy::StartReceivePreamble(
 
                         break;
                 case WurMainRadioNetDevicePhyStateHelper::TX:
-                        std::cout << Now().GetSeconds() << " WurMainRadioNetDeviceDummyPhy::StartReceivePreamble transmitting packet" << std::endl;
                         NS_LOG_DEBUG("Drop packet because already in Tx (power="
                                      << rxPowerW << "W)");
                         NotifyRxDrop(ppdu, "Already in Tx");
@@ -111,7 +106,7 @@ void WurMainRadioNetDeviceDummyPhy::StartReceivePreamble(
                 //        }
                 //        break;
                 case WurMainRadioNetDevicePhyStateHelper::IDLE:
-                        std::cout << Now().GetSeconds() << " WurMainRadioNetDeviceDummyPhy::StartReceivePreamble start rx " << std::endl;
+			NS_LOG_INFO("start rx");
                         StartRx(ppdu, rxPowerW);
                         break;
                 case WurMainRadioNetDevicePhyStateHelper::OFF:
@@ -142,7 +137,7 @@ void WurMainRadioNetDeviceDummyPhy::StartRx(Ptr<WurMainRadioPpdu> ppdu,
         // set current receiving packet
         currentRxPacket = ppdu;
         // schedule header reception after preamble reception
-        Simulator::Schedule(startOfPreambleDuration,
+        Simulator::ScheduleWithContext(m_netdevice->GetNode()->GetId(), startOfPreambleDuration,
                             &WurMainRadioNetDeviceDummyPhy::StartReceiveHeader,
                             this, ppdu);
 }
@@ -153,7 +148,7 @@ void WurMainRadioNetDeviceDummyPhy::StartReceiveHeader(
         NotifyRxBegin(ppdu);
         Time headerDuration =
             Seconds((double)ppdu->GetPpduHeaderLength() / BIT_PER_SECONDS);
-        Simulator::Schedule(headerDuration,
+        Simulator::ScheduleWithContext(Simulator::GetContext(),headerDuration,
                             &WurMainRadioNetDeviceDummyPhy::StartReceivePayload,
                             this, ppdu->GetPsdu());
 }
@@ -163,15 +158,14 @@ void WurMainRadioNetDeviceDummyPhy::StartReceivePayload(
         // NS_LOG_FUNCTION(this << *psdu);
         Time payloadDuration =
             Seconds((psdu->GetPacket()->GetSize() * 8.0) / BIT_PER_SECONDS);
-        Simulator::Schedule(payloadDuration,
+        Simulator::ScheduleWithContext(Simulator::GetContext(),payloadDuration,
                             &WurMainRadioNetDeviceDummyPhy::EndReceivePayload,
                             this, psdu);
         NS_LOG_DEBUG("Receiving PSDU");
 }
 void WurMainRadioNetDeviceDummyPhy::EndReceivePayload(
     Ptr<WurMainRadioPsdu> psdu) {
-        std::cout << Now().GetSeconds() << " WurMainRadioNetDeviceDummyPhy::EndReceivePayload " << std::endl;
-        // NS_LOG_FUNCTION(this << *psdu);
+        NS_LOG_FUNCTION(this);
         // trace rx end
         // TODO: why we have psdu?
         // NotifyRxEnd(psdu);
@@ -203,9 +197,7 @@ void WurMainRadioNetDeviceDummyPhy::StartTx(Ptr<WurMainRadioPsdu> psdu) {
         if (GetState() == WurMainRadioNetDevicePhyStateHelper::IDLE) {
                 SetState(WurMainRadioNetDevicePhyStateHelper::TX);
                 // create a ppdu
-                std::cout << Now().GetSeconds()
-                          << " WurMainRadioNetDeviceDummyPhy::StartTx "
-                          << std::endl;
+		NS_LOG_FUNCTION_NOARGS();
                 // TODO: define header duration
                 Ptr<WurMainRadioPpdu> ppdu = Create<WurMainRadioPpdu>(psdu, 5);
                 // TODO: wrapper around this function, tx end should be
@@ -217,9 +209,11 @@ void WurMainRadioNetDeviceDummyPhy::StartTx(Ptr<WurMainRadioPsdu> psdu) {
                                                        ->GetSerializedSize()) /
                                           BIT_PER_SECONDS);
                 txDuration += PREAMBLE_DURATION;
-                Simulator::Schedule(
+                Simulator::ScheduleWithContext(Simulator::GetContext(),
                     txDuration, &WurMainRadioNetDevicePhy::EndTx, this, ppdu);
-                m_channel->Send(this, ppdu, 19);
+		//TODO: correct formula for gain
+                m_channel->Send(this, ppdu, GetTxPower() + GetTxGain());
+
         }
 }
 

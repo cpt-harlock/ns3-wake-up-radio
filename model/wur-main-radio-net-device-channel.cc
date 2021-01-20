@@ -65,35 +65,24 @@ void WurMainRadioNetDeviceChannel::Receive(Ptr<WurMainRadioNetDevicePhy> phy,
         // I just need to check if the phy is awake.
         // If this is the case, I invoke the processing function
         // Otherwise drop the packet
-        std::cout << Now().GetSeconds()
-                  << " WurMainRadioNetDeviceChannel::Receive" << std::endl;
         if (!phy->IsAwake()) {
-                std::cout
-                    << Now().GetSeconds()
-                    << " WurMainRadioNetDeviceChannel::Receive receiver off"
-                    << std::endl;
                 NS_LOG_INFO("Phy asleep, can't receive message");
                 return;
         }
         if ((rxPowerDbm + phy->GetRxGain()) < phy->GetRxSensitivity()) {
-                std::cout << Now().GetSeconds()
-                          << " WurMainRadioNetDeviceChannel::Receive power to low"
-                          << std::endl;
                 NS_LOG_INFO("Received signal too weak to process: "
                             << rxPowerDbm << " dBm");
                 return;
         }
         // it is upon the extending class to handle the reception
-        std::cout << Now().GetSeconds()
-                  << " WurMainRadioNetDeviceChannel::Receive invoking preamble reception" << std::endl;
+        NS_LOG_INFO("invoking preamble reception");
+	NS_LOG_INFO("sensitiviy " << phy->GetRxSensitivity());
         phy->StartReceivePreamble(ppdu, DbmToW(rxPowerDbm + phy->GetRxGain()));
 }
 void WurMainRadioNetDeviceChannel::Send(Ptr<WurMainRadioNetDevicePhy> sender,
                                         Ptr<const WurMainRadioPpdu> ppdu,
                                         double txPowerDbm) const {
         NS_LOG_FUNCTION(this << sender << ppdu << txPowerDbm);
-        std::cout << Now().GetSeconds() << " WurMainRadioNetDeviceChannel::Send"
-                  << std::endl;
         Ptr<MobilityModel> senderMobility = sender->GetMobility();
         NS_ASSERT(senderMobility != 0);
         for (PhyList::const_iterator i = m_phyList.begin();
@@ -106,10 +95,7 @@ void WurMainRadioNetDeviceChannel::Send(Ptr<WurMainRadioNetDevicePhy> sender,
                         //        continue;
                         //}
 
-                        std::cout
-                            << Now().GetSeconds()
-                            << " WurMainRadioNetDeviceChannel::Send found a phy"
-                            << std::endl;
+                            NS_LOG_INFO(" WurMainRadioNetDeviceChannel::Send found a phy");
                         Ptr<MobilityModel> receiverMobility =
                             (*i)->GetMobility()->GetObject<MobilityModel>();
                         // valid only for speed << c :)
