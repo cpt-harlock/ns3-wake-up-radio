@@ -25,20 +25,18 @@ TypeId WurCommonChannel::GetTypeId(void) {
 		.SetParent<Channel>()
 		.SetGroupName("WakeUpRadio")
 		.AddConstructor<WurCommonChannel>()
-		.AddAttribute(
-		    "PropagationLossModel",
-		    "A pointer to the propagation loss model "
-		    "attached to this channel.",
-		    PointerValue(),
-		    MakePointerAccessor(&WurCommonChannel::m_loss),
-		    MakePointerChecker<PropagationLossModel>())
-		.AddAttribute(
-		    "PropagationDelayModel",
-		    "A pointer to the propagation delay model "
-		    "attached to this channel.",
-		    PointerValue(),
-		    MakePointerAccessor(&WurCommonChannel::m_delay),
-		    MakePointerChecker<PropagationDelayModel>());
+		.AddAttribute("PropagationLossModel",
+			      "A pointer to the propagation loss model "
+			      "attached to this channel.",
+			      PointerValue(),
+			      MakePointerAccessor(&WurCommonChannel::m_loss),
+			      MakePointerChecker<PropagationLossModel>())
+		.AddAttribute("PropagationDelayModel",
+			      "A pointer to the propagation delay model "
+			      "attached to this channel.",
+			      PointerValue(),
+			      MakePointerAccessor(&WurCommonChannel::m_delay),
+			      MakePointerChecker<PropagationDelayModel>());
 	return tid;
 }
 void WurCommonChannel::Send(Ptr<WurCommonPhy> sender,
@@ -81,8 +79,8 @@ void WurCommonChannel::Send(Ptr<WurCommonPhy> sender,
 			}
 
 			Simulator::ScheduleWithContext(
-			    dstNode, delay, &WurCommonChannel::Receive, (*i),
-			    copy, rxPowerDbm);
+			    dstNode, delay, &WurCommonChannel::Receive, 
+			    (*i), copy, rxPowerDbm);
 		}
 	}
 }

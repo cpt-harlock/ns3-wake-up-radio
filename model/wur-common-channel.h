@@ -15,14 +15,14 @@ class WurCommonChannel : public Channel {
 	void SetPropagationDelayModel(const Ptr<PropagationDelayModel> delay);
 	void Send(Ptr<WurCommonPhy> sender, Ptr<const WurCommonPpdu> ppdu,
 		  double txPowerDbm) const;
-	void Receive(Ptr<WurCommonPhy> receiver, Ptr<WurCommonPpdu> ppdu,
-		     double rxPowerDbm);
         void Add(Ptr<WurCommonPhy> phy);
 	// inherited from channel
 	virtual std::size_t GetNDevices(void) const;
 	virtual Ptr<NetDevice> GetDevice(std::size_t i) const;
 
        private:
+	static void Receive(Ptr<WurCommonPhy> receiver, Ptr<WurCommonPpdu> ppdu,
+		     double rxPowerDbm);
 	typedef std::vector<Ptr<WurCommonPhy>> PhyList;
 	PhyList m_phyList;  //!< List of WurMainRadioPhys connected to this
 	Ptr<PropagationLossModel> m_loss;    //!< Propagation loss model
