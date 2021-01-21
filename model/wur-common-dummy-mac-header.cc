@@ -29,10 +29,8 @@ uint32_t WurCommonDummyMacHeader::GetSerializedSize() const {
 void WurCommonDummyMacHeader::Serialize(Buffer::Iterator start) const {
 	uint8_t temp;
 	m_from.CopyTo(&temp);
-	NS_LOG_FUNCTION("From: " << temp);
 	start.WriteU8(temp);
 	m_to.CopyTo(&temp);
-	NS_LOG_FUNCTION("To: " << temp);
 	start.WriteU8(temp);
 }
 uint32_t WurCommonDummyMacHeader::Deserialize(Buffer::Iterator start) {
