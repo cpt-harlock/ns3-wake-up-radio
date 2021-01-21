@@ -12,8 +12,8 @@ class WurCommonDummyMac : public WurCommonMac {
         void StartWurMechanism();
         void OnDataRx(Ptr<Packet>);
         void SetPromisc();
-        void SetAddress(Address);
-        Address GetAddress() const;
+        virtual void SetAddress(Address);
+        virtual Address GetAddress() const;
         void StartDataTx();
 
         private:

@@ -22,8 +22,8 @@ class WurCommonDummyMacHeader : public Header {
         virtual void Print(std::ostream &os) const;
         void SetFrom(uint8_t from) { m_from = Mac8Address(from); }
         void SetTo(uint8_t to) { m_to = Mac8Address(to); }
-        void SetFrom(Address from) { m_from.ConvertFrom(from); }
-        void SetTo(Address to) { m_to.ConvertFrom(to); }
+        void SetFrom(Address from) { m_from = Mac8Address::ConvertFrom(from); }
+        void SetTo(Address to) { m_to  = Mac8Address::ConvertFrom(to); }
         Mac8Address GetFrom() { return m_from; }
         Mac8Address GetTo() { return m_to; }
 

@@ -111,7 +111,7 @@ TypeId WurMainRadioNetDevicePhy::GetTypeId(void) {
 		    "RxSensitivity",
 		    "The energy of a received signal should be higher than "
 		    "this threshold (dBm) for the PHY to detect the signal.",
-		    DoubleValue(-50.0),
+		    DoubleValue(-100.0),
 		    MakeDoubleAccessor(
 			&WurMainRadioNetDevicePhy::SetRxSensitivity,
 			&WurMainRadioNetDevicePhy::GetRxSensitivity),
