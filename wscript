@@ -18,14 +18,16 @@ def build(bld):
         'model/wur-main-radio-psdu.cc',
         'model/wur-common-mac.cc',
         'model/wur-common-mac-state-helper.cc',
-        'model/wur-net-device.cc',
         'model/wur-ppdu.cc',
         'model/wur-common-dummy-mac.cc',
         'model/wur-common-dummy-mac-header.cc',
 	'model/wur-common-channel.cc',
 	'model/wur-common-phy.cc',
 	'model/wur-common-ppdu.cc',
+	'model/wur-common-psdu.cc',
 	'model/wur-common-net-device.cc',
+	'model/wur-shared-mac.cc',
+	'model/wur-shared-mac-dummy-impl.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('wake-up-radio')
@@ -50,14 +52,16 @@ def build(bld):
         'model/wur-main-radio-psdu.h',
         'model/wur-common-mac.h',
         'model/wur-common-mac-state-helper.h',
-        'model/wur-net-device.h',
         'model/wur-ppdu.h',
         'model/wur-common-dummy-mac.h',
         'model/wur-common-dummy-mac-header.h',
 	'model/wur-common-channel.h',
-	'model/wur-common-phy.h',
 	'model/wur-common-ppdu.h',
+	'model/wur-common-psdu.h',
+	'model/wur-common-phy.h',
 	'model/wur-common-net-device.h',
+	'model/wur-shared-mac.h',
+	'model/wur-shared-mac-dummy-impl.h',
        ]
 
     if bld.env.ENABLE_EXAMPLES:

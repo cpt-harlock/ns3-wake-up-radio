@@ -2,11 +2,18 @@
 #define WUR_COMMON_PHY_H
 #include "ns3/mobility-model.h"
 #include "ns3/net-device.h"
+#include "ns3/nstime.h"
 #include "ns3/object.h"
-#include "wur-common-net-device.h"
 namespace ns3 {
 class WurCommonPpdu;
+class WurCommonPsdu;
 class WurCommonChannel;
+class WurCommonNetDevice;
+/**
+ * \brief Class ancestor for both Main Radio and Wur Radio phy
+ * It enforces the StartReceivePreamble where we check is the phy
+ * can receive the packet and if the packet is truncated
+ */ 
 class WurCommonPhy : public Object {
        public:
 	typedef Callback<void, Ptr<Packet> > RxOkCallback;
@@ -36,6 +43,8 @@ class WurCommonPhy : public Object {
 	double GetRxSensitivity() const { return m_rxSensitivityDbm; };
 	double GetTxPower() { return m_txPowerDbm; }
 	WurCommonPhyState GetState() { return m_state; }
+	void TurnOff();
+	void TurnOn();
 	virtual void NotifyRxBegin(Ptr<const WurCommonPpdu>) = 0;
 	virtual void NotifyRxDrop(Ptr<const WurCommonPpdu>, std::string) = 0; 
 	virtual void NotifyRxEnd(Ptr<const WurCommonPpdu>) = 0; 
@@ -43,21 +52,42 @@ class WurCommonPhy : public Object {
 	virtual void NotifyTxDrop(Ptr<const WurCommonPpdu>) = 0;
 	virtual void NotifyTxEnd(Ptr<const WurCommonPpdu>) = 0;
 	virtual void StartRx(Ptr<WurCommonPpdu> ppdu, double rxPowerDbm) = 0;
+	virtual void StartTx(Ptr<WurCommonPsdu> psdu) = 0;
+       private:
+	Ptr<MobilityModel> m_mobility;
+	Ptr<WurCommonPpdu> m_rxPacket;
+	Ptr<WurCommonPpdu> m_txPacket;
+	double m_rxGainDbm;
+	double m_txGainDbm;
+	double m_rxSensitivityDbm;
+	double m_rxPowerDbm;
+	double m_txPowerDbm;
 
        protected:
 	Ptr<WurCommonChannel> m_channel;
 	Ptr<WurCommonNetDevice> m_netdevice;
 	RxOkCallback m_rxOkCallback;
 	TxOkCallback m_txOkCallback;
-
-       private:
-	Ptr<MobilityModel> m_mobility;
 	WurCommonPhyState m_state;
-	double m_rxGainDbm;
-	double m_txGainDbm;
-	double m_rxSensitivityDbm;
-	double m_rxPowerDbm;
-	double m_txPowerDbm;
+	Time m_preambleDuration;
+
+	void SetRxPacket(Ptr<WurCommonPpdu> rxPacket) {
+		m_rxPacket = rxPacket;
+	}
+	void SetTxPacket(Ptr<WurCommonPpdu> txPacket) {
+		m_txPacket = txPacket;
+	}
+
+	Ptr<WurCommonPpdu> GetRxPacket() const { return m_rxPacket; }
+	Ptr<WurCommonPpdu> GetTxPacket() const { return m_txPacket; }
+
+	void UnsetRxPacket() { m_rxPacket = nullptr;  } 
+	void UnsetTxPacket() { m_txPacket = nullptr;  } 
+
+       public:
+	void SetRxOkCallback(RxOkCallback callback) { m_rxOkCallback = callback; }
+	void SetTxOkCallback(TxOkCallback callback) { m_txOkCallback = callback; }
+
 };
 }  // namespace ns3
 #endif /* WUR_COMMON_PHY_H */

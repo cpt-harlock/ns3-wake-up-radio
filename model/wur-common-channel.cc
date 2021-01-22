@@ -4,7 +4,9 @@
 #include "ns3/log.h"
 #include "ns3/node.h"
 #include "ns3/pointer.h"
+#include "ns3/ptr.h"
 #include "ns3/simulator.h"
+#include "wur-common-net-device.h"
 namespace ns3 {
 NS_LOG_COMPONENT_DEFINE("WurCommonChannel");
 void WurCommonChannel::SetPropagationDelayModel(
@@ -17,7 +19,7 @@ void WurCommonChannel::SetPropagationLossModel(
 }
 std::size_t WurCommonChannel::GetNDevices() const { return m_phyList.size(); }
 Ptr<NetDevice> WurCommonChannel::GetDevice(std::size_t i) const {
-	return m_phyList[i]->GetDevice();
+	return m_phyList[i]->GetDevice()->GetObject<NetDevice>();
 }
 TypeId WurCommonChannel::GetTypeId(void) {
 	static TypeId tid =

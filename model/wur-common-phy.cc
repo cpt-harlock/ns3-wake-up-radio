@@ -3,6 +3,7 @@
 #include "wur-common-ppdu.h"
 #include "wur-common-channel.h"
 #include "wur-common-net-device.h"
+#include "ns3/simulator.h"
 namespace ns3 {
 NS_LOG_COMPONENT_DEFINE("WurCommonPhy");
 Ptr<WurCommonChannel> WurCommonPhy::GetChannel() const { return m_channel; }
@@ -30,7 +31,9 @@ void WurCommonPhy::StartReceivePreamble(Ptr<WurCommonPpdu> ppdu,
 			break;
 		case WurCommonPhyState::IDLE:
 			NS_LOG_INFO("start rx");
-			StartRx(ppdu, rxPowerDbm);
+			m_state = WurCommonPhyState::RX;
+			SetRxPacket(ppdu);
+			Simulator::Schedule(m_preambleDuration, &WurCommonPhy::StartRx, this, ppdu, rxPowerDbm);
 			break;
 		case WurCommonPhyState::OFF:
 			NS_LOG_DEBUG("Drop packet because in sleep mode");
@@ -42,4 +45,21 @@ void WurCommonPhy::StartReceivePreamble(Ptr<WurCommonPpdu> ppdu,
 	}
 }
 
+void WurCommonPhy::TurnOn() {
+	if(m_state == WurCommonPhyState::OFF) {
+		m_state = WurCommonPhyState::IDLE;
+	}
+}
+
+void WurCommonPhy::TurnOff() {
+	if(m_state != WurCommonPhyState::OFF) {
+		m_state = WurCommonPhyState::OFF;
+		if(m_rxPacket != nullptr)
+			m_rxPacket->SetTruncatedRx();
+		if(m_txPacket != nullptr)
+			m_txPacket->SetTruncatedTx();
+	}
+		
+}
+	
 }  // namespace ns3
