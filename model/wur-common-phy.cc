@@ -1,14 +1,14 @@
 #include "wur-common-phy.h"
 #include "ns3/log.h"
-#include "wur-common-ppdu.h"
+#include "ns3/simulator.h"
 #include "wur-common-channel.h"
 #include "wur-common-net-device.h"
-#include "ns3/simulator.h"
+#include "wur-common-ppdu.h"
 namespace ns3 {
 NS_LOG_COMPONENT_DEFINE("WurCommonPhy");
 Ptr<WurCommonChannel> WurCommonPhy::GetChannel() const { return m_channel; }
 Ptr<MobilityModel> WurCommonPhy::GetMobility() const { return m_mobility; }
-Ptr<WurCommonNetDevice> WurCommonPhy::GetDevice() const { return m_netdevice; }
+Ptr<WurCommonNetDevice> WurCommonPhy::GetDevice() const { return m_netDevice; }
 void WurCommonPhy::StartReceivePreamble(Ptr<WurCommonPpdu> ppdu,
 					double rxPowerDbm) {
 	NS_LOG_FUNCTION(this << rxPowerDbm);
@@ -33,7 +33,9 @@ void WurCommonPhy::StartReceivePreamble(Ptr<WurCommonPpdu> ppdu,
 			NS_LOG_INFO("start rx");
 			m_state = WurCommonPhyState::RX;
 			SetRxPacket(ppdu);
-			Simulator::Schedule(m_preambleDuration, &WurCommonPhy::StartRx, this, ppdu, rxPowerDbm);
+			Simulator::Schedule(m_preambleDuration,
+					    &WurCommonPhy::StartRx, this, ppdu,
+					    rxPowerDbm);
 			break;
 		case WurCommonPhyState::OFF:
 			NS_LOG_DEBUG("Drop packet because in sleep mode");
@@ -46,20 +48,32 @@ void WurCommonPhy::StartReceivePreamble(Ptr<WurCommonPpdu> ppdu,
 }
 
 void WurCommonPhy::TurnOn() {
-	if(m_state == WurCommonPhyState::OFF) {
+	if (m_state == WurCommonPhyState::OFF) {
 		m_state = WurCommonPhyState::IDLE;
 	}
 }
 
 void WurCommonPhy::TurnOff() {
-	if(m_state != WurCommonPhyState::OFF) {
+	if (m_state != WurCommonPhyState::OFF) {
 		m_state = WurCommonPhyState::OFF;
-		if(m_rxPacket != nullptr)
-			m_rxPacket->SetTruncatedRx();
-		if(m_txPacket != nullptr)
-			m_txPacket->SetTruncatedTx();
+		if (m_rxPacket != nullptr) m_rxPacket->SetTruncatedRx();
+		if (m_txPacket != nullptr) m_txPacket->SetTruncatedTx();
 	}
-		
 }
-	
+void WurCommonPhy::SetMobility(Ptr<MobilityModel> mobility) {
+	m_mobility = mobility;
+}
+
+TypeId WurCommonPhy::GetTypeId() {
+	static TypeId tid =
+	    TypeId("ns3::WurCommonPhy").SetParent<Object>().SetGroupName("Wur");
+	return tid;
+}
+void WurCommonPhy::SetChannel(Ptr<WurCommonChannel> channel) {
+	m_channel = channel;
+}
+	void WurCommonPhy::SetDevice(Ptr<WurCommonNetDevice> device) {
+		m_netDevice = device;
+	}
+
 }  // namespace ns3

@@ -3,6 +3,7 @@
 #include "ns3/log.h"
 #include "wur-common-net-device.h"
 #include <utility>
+#include "wur-common-phy.h"
 namespace ns3 {
 NS_LOG_COMPONENT_DEFINE("WurSharedMac");
 void WurSharedMac::SetNetDevice(Ptr<WurCommonNetDevice> netDevice) {
@@ -89,8 +90,10 @@ void WurSharedMac::StartDataRxWrapper() {
 void WurSharedMac::OnWurTxMechanismSuccess() {
 	// If no packet reception activated in the meanwhile and wurSendingTimer
 	// is running
+	NS_LOG_FUNCTION_NOARGS();
 	if (m_state == WurSharedMacState::WUR_TX_MECHANISM &&
 	    wurSendingTimer.IsRunning()) {
+		NS_LOG_FUNCTION("wur mechanism success");
 		wurSendingTimer.Remove();
 		StartDataTxWrapper();
 	}
@@ -104,6 +107,7 @@ void WurSharedMac::OnWurRxMechanismSuccess() {
 	}
 }
 void WurSharedMac::StartDataTxWrapper() {
+	NS_LOG_FUNCTION_NOARGS();
 	dataSendingTimer.Schedule(DATA_TRANSMISSION_TIMEOUT);
 	m_state = WurSharedMacState::SENDING_DATA;
 	StartDataTx();
@@ -132,6 +136,14 @@ void WurSharedMac::Initialize() {
 				     this);
 	dataReceivingTimer.SetFunction(
 	    &WurSharedMac::TimerDataReceivingCallback, this);
+}
+
+TypeId WurSharedMac::GetTypeId() {
+	static TypeId tid =
+	    TypeId("ns3::WurSharedMac")
+		.SetParent<Object>()
+		.SetGroupName("Wur");
+	return tid;
 }
 
 }  // namespace ns3

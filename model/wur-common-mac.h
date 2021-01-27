@@ -11,10 +11,10 @@
 
 #include "wur-common-mac-state-helper.h"
 #include "ns3/traced-callback.h"
-#include "ns3/wur-net-device.h"
 #include "ns3/nstime.h"
 #include "ns3/object.h"
 #include "ns3/timer.h"
+#include "wur-net-device.h"
 namespace ns3 {
 
 class Address;

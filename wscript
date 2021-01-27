@@ -28,6 +28,8 @@ def build(bld):
 	'model/wur-common-net-device.cc',
 	'model/wur-shared-mac.cc',
 	'model/wur-shared-mac-dummy-impl.cc',
+	'model/wur-common-phy-dummy-impl.cc',
+	'model/wur-common-net-device-dummy-impl.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('wake-up-radio')
@@ -62,6 +64,9 @@ def build(bld):
 	'model/wur-common-net-device.h',
 	'model/wur-shared-mac.h',
 	'model/wur-shared-mac-dummy-impl.h',
+	'model/wur-common-phy-dummy-impl.h',
+	'model/wur-common-net-device-dummy-impl.h',
+	'model/wur-net-device.h',
        ]
 
     if bld.env.ENABLE_EXAMPLES:

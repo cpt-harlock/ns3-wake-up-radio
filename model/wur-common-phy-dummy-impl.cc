@@ -5,38 +5,58 @@
 #include "wur-common-ppdu.h"
 
 namespace ns3 {
-	void WurCommonPhyDummyImpl::NotifyRxBegin(Ptr<const WurCommonPpdu>) {
-	}
-	void WurCommonPhyDummyImpl::NotifyRxDrop(Ptr<const WurCommonPpdu>, std::string) {
-	}
-	void WurCommonPhyDummyImpl::NotifyRxEnd(Ptr<const WurCommonPpdu>) {}
-	void WurCommonPhyDummyImpl::NotifyTxBegin(Ptr<const WurCommonPpdu>, double) {}
-	void WurCommonPhyDummyImpl::NotifyTxDrop(Ptr<const WurCommonPpdu>) {}
-	void WurCommonPhyDummyImpl::NotifyTxEnd(Ptr<const WurCommonPpdu>) {}
-	void WurCommonPhyDummyImpl::StartRx(Ptr<WurCommonPpdu> ppdu, double rxPowerDbm) {
-		//just schedule EndRx
-		Time delay = Seconds((GetRxPacket()->GetPsdu()->GetPayload()->GetSerializedSize()) / m_dataRate );
-		Simulator::Schedule(delay, &WurCommonPhyDummyImpl::EndRx, this, ppdu);
-	}
-	void WurCommonPhyDummyImpl::EndRx(Ptr<WurCommonPpdu> ppdu) {
-		UnsetRxPacket();
-		m_state = WurCommonPhyState::IDLE;
-		m_rxOkCallback(ppdu->GetPsdu()->GetPayload());
-	}
-	void WurCommonPhyDummyImpl::StartTx(Ptr<WurCommonPsdu> psdu) {
-		//assuming upper layer checked if idle
-		Ptr<WurCommonPpdu> ppdu = Create<WurCommonPpdu>();
-		ppdu->SetPsdu(psdu);
-		SetTxPacket(ppdu);
-		m_state = WurCommonPhyState::TX;
-		Time delay = Seconds((GetTxPacket()->GetPsdu()->GetPayload()->GetSerializedSize()) / m_dataRate );
-		Simulator::Schedule(delay + m_preambleDuration, &WurCommonPhyDummyImpl::EndTx, this, ppdu);
-
-	}
-	void WurCommonPhyDummyImpl::EndTx(Ptr<WurCommonPpdu> ppdu) {
-		UnsetTxPacket();
-		m_state = WurCommonPhyState::IDLE;
-		m_txOkCallback(ppdu->GetPsdu()->GetPayload());
-	}
-		
+NS_LOG_COMPONENT_DEFINE("WurCommonPhyDummyImpl");
+void WurCommonPhyDummyImpl::NotifyRxBegin(Ptr<const WurCommonPpdu>) {}
+void WurCommonPhyDummyImpl::NotifyRxDrop(Ptr<const WurCommonPpdu>,
+					 std::string) {}
+void WurCommonPhyDummyImpl::NotifyRxEnd(Ptr<const WurCommonPpdu>) {}
+void WurCommonPhyDummyImpl::NotifyTxBegin(Ptr<const WurCommonPpdu>, double) {}
+void WurCommonPhyDummyImpl::NotifyTxDrop(Ptr<const WurCommonPpdu>) {}
+void WurCommonPhyDummyImpl::NotifyTxEnd(Ptr<const WurCommonPpdu>) {}
+void WurCommonPhyDummyImpl::StartRx(Ptr<WurCommonPpdu> ppdu,
+				    double rxPowerDbm) {
+	NS_LOG_FUNCTION_NOARGS();
+	// just schedule EndRx
+	Time delay = Seconds(((double)GetRxPacket()
+				  ->GetPsdu()
+				  ->GetPayload()
+				  ->GetSerializedSize()) /
+			     m_dataRate);
+	NS_LOG_FUNCTION(
+	    "data rate "
+	    << m_dataRate << " payload size "
+	    << GetRxPacket()->GetPsdu()->GetPayload()->GetSerializedSize()
+	    << "rx delay " << delay);
+	Simulator::Schedule(delay, &WurCommonPhyDummyImpl::EndRx, this, ppdu);
 }
+void WurCommonPhyDummyImpl::EndRx(Ptr<WurCommonPpdu> ppdu) {
+	NS_LOG_FUNCTION_NOARGS();
+	UnsetRxPacket();
+	m_state = WurCommonPhyState::IDLE;
+	m_rxOkCallback(ppdu->GetPsdu()->GetPayload());
+}
+void WurCommonPhyDummyImpl::StartTx(Ptr<WurCommonPsdu> psdu) {
+	// assuming upper layer checked if idle
+	NS_LOG_FUNCTION_NOARGS();
+	Ptr<WurCommonPpdu> ppdu = Create<WurCommonPpdu>();
+	ppdu->SetPsdu(psdu);
+	SetTxPacket(ppdu);
+	m_state = WurCommonPhyState::TX;
+	Time delay = Seconds(
+	    (GetTxPacket()->GetPsdu()->GetPayload()->GetSerializedSize()) /
+	    m_dataRate);
+	Simulator::Schedule(delay + m_preambleDuration,
+			    &WurCommonPhyDummyImpl::EndTx, this, ppdu);
+	GetChannel()->Send(this, ppdu, GetTxPower());
+}
+void WurCommonPhyDummyImpl::EndTx(Ptr<WurCommonPpdu> ppdu) {
+	UnsetTxPacket();
+	m_state = WurCommonPhyState::IDLE;
+	m_txOkCallback(ppdu->GetPsdu()->GetPayload());
+}
+
+void WurCommonPhyDummyImpl::SetDataRate(double dataRate) {
+	m_dataRate = dataRate;
+}
+double WurCommonPhyDummyImpl::GetDataRate() const { return m_dataRate; }
+}  // namespace ns3

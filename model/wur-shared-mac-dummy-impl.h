@@ -17,6 +17,7 @@ class WurSharedMacDummyImpl : public WurSharedMac {
 	void StartDataTx();
 	void StartDataRx();
 	void SetPromisc(void);
+	static TypeId GetTypeId();
 
 	class WurSharedMacDummyImplHeader : public Header {
 		using Chunk::Deserialize;

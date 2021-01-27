@@ -3,23 +3,26 @@
 #include <bits/stdint-uintn.h>
 #include "ns3/net-device.h"
 #include "wur-common-channel.h"
-#include "wur-common-phy.h"
+//#include "wur-common-phy.h"
 namespace ns3 {
 class WurSharedMac;
+class WurCommonPhy;
 class WurCommonNetDevice : public NetDevice {
        private:
 	uint32_t m_ifIndex;
 	Ptr<WurSharedMac> m_mac;
 	Ptr<WurCommonPhy> m_mainRadioPhy;
 	Ptr<WurCommonPhy> m_wurRadioPhy;
+	ReceiveCallback m_rxCb;
+	PromiscReceiveCallback m_promiscRxCb;
 
        public:
 	Ptr<WurCommonPhy> GetMainRadioPhy() const;
 	Ptr<WurCommonPhy> GetWurRadioPhy() const;
-	Ptr<WurSharedMac> GetCommonMac() const; 
+	Ptr<WurSharedMac> GetSharedMac() const; 
 	void SetMainRadioPhy(Ptr<WurCommonPhy> mainRadioPhy);
 	void SetWurRadioPhy(Ptr<WurCommonPhy> wurRadioPhy);
-	void SetCommonMac(Ptr<WurSharedMac> mac); 
+	void SetSharedMac(Ptr<WurSharedMac> mac); 
 	Ptr<WurCommonChannel> GetMainRadioChannel() const;
 	Ptr<WurCommonChannel> GetWurRadioChannel() const;
 	// inherithed from NetDevice
@@ -46,8 +49,7 @@ class WurCommonNetDevice : public NetDevice {
 	 *         concept of a channel. i.e., callers _must_ check for zero
 	 *         and be ready to handle it.
 	 */
-	virtual Ptr<Channel> GetChannel(void) const { return m_mainRadioPhy->GetChannel(); }
-
+	virtual Ptr<Channel> GetChannel(void) const; 
 	/**
 	 * Set the address of this interface
 	 * \param address address to set
@@ -241,9 +243,6 @@ class WurCommonNetDevice : public NetDevice {
 	 * \returns true if the callback could handle the packet successfully,
 	 * false otherwise.
 	 */
-	typedef Callback<bool, Ptr<NetDevice>, Ptr<const Packet>, uint16_t,
-			 const Address&>
-	    ReceiveCallback;
 
 	/**
 	 * \param cb callback to invoke whenever a packet has been received and
@@ -252,8 +251,9 @@ class WurCommonNetDevice : public NetDevice {
 	 * Set the callback to be used to notify higher layers when a packet has
 	 * been received.
 	 */
-	virtual void SetReceiveCallback(ReceiveCallback cb) = 0;
+	virtual void SetReceiveCallback(ReceiveCallback cb);
 
+  	virtual void SetPromiscReceiveCallback (PromiscReceiveCallback cb);
 	/**
 	 * \param device a pointer to the net device which is calling this
 	 * callback \param packet the packet received \param protocol the 16 bit
@@ -265,9 +265,6 @@ class WurCommonNetDevice : public NetDevice {
 	 * (broadcast/multicast/unicast/otherhost) \returns true if the callback
 	 * could handle the packet successfully, false otherwise.
 	 */
-	typedef Callback<bool, Ptr<NetDevice>, Ptr<const Packet>, uint16_t,
-			 const Address&, const Address&, enum PacketType>
-	    PromiscReceiveCallback;
 
 	/**
 	 * \param cb callback to invoke whenever a packet has been received in
@@ -279,7 +276,6 @@ class WurCommonNetDevice : public NetDevice {
 	 * sensed by the netdevice but which are intended to be received by
 	 * other hosts.
 	 */
-	virtual void SetPromiscReceiveCallback(PromiscReceiveCallback cb) = 0;
 
 	/**
 	 * \return true if this interface supports a bridging mode, false

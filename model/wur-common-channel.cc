@@ -7,6 +7,7 @@
 #include "ns3/ptr.h"
 #include "ns3/simulator.h"
 #include "wur-common-net-device.h"
+#include "wur-common-phy.h"
 namespace ns3 {
 NS_LOG_COMPONENT_DEFINE("WurCommonChannel");
 void WurCommonChannel::SetPropagationDelayModel(
@@ -99,7 +100,7 @@ void WurCommonChannel::Receive(Ptr<WurCommonPhy> receiver,
 	if ((rxPowerDbm + receiver->GetRxGain()) <
 	    receiver->GetRxSensitivity()) {
 		NS_LOG_INFO("Received signal too weak to process: "
-			    << rxPowerDbm << " dBm");
+			    << rxPowerDbm << " dBm" << " Sensitivity: " << receiver->GetRxSensitivity());
 		return;
 	}
 	NS_LOG_INFO("invoking preamble reception");

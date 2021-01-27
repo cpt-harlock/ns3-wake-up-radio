@@ -15,9 +15,11 @@ class WurCommonPhyDummyImpl : public WurCommonPhy {
 	void EndRx(Ptr<WurCommonPpdu> ppdu);
 	void EndTx(Ptr<WurCommonPpdu> ppdu);
 	void StartTx(Ptr<WurCommonPsdu> psdu);
+	void SetDataRate(double dataRate);
+       	double GetDataRate() const;	
 
        private:
-	double m_dataRate;
+	double m_dataRate = 1000000;
 };
 
 }  // namespace ns3

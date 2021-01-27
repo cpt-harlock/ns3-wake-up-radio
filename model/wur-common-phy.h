@@ -4,11 +4,11 @@
 #include "ns3/net-device.h"
 #include "ns3/nstime.h"
 #include "ns3/object.h"
+#include "wur-common-channel.h"
+#include "wur-common-net-device.h"
 namespace ns3 {
 class WurCommonPpdu;
 class WurCommonPsdu;
-class WurCommonChannel;
-class WurCommonNetDevice;
 /**
  * \brief Class ancestor for both Main Radio and Wur Radio phy
  * It enforces the StartReceivePreamble where we check is the phy
@@ -65,7 +65,7 @@ class WurCommonPhy : public Object {
 
        protected:
 	Ptr<WurCommonChannel> m_channel;
-	Ptr<WurCommonNetDevice> m_netdevice;
+	Ptr<WurCommonNetDevice> m_netDevice;
 	RxOkCallback m_rxOkCallback;
 	TxOkCallback m_txOkCallback;
 	WurCommonPhyState m_state;

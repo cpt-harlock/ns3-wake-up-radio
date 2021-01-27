@@ -51,9 +51,13 @@ Address WurMainRadioNetDevice::GetAddress() const {
 	return m_mac->GetAddress();
 }
 
-uint16_t WurMainRadioNetDevice::GetMtu() const { return m_mtu; }
+uint16_t WurMainRadioNetDevice::GetMtu() const { 
+	NS_LOG_FUNCTION(this << m_mtu);
+	return m_mtu; 
+}
 
 bool WurMainRadioNetDevice::SetMtu(const uint16_t mtu) {
+	NS_LOG_FUNCTION_NOARGS();
 	if (mtu > MAX_MSDU_SIZE) return false;
 	m_mtu = mtu;
 	return true;

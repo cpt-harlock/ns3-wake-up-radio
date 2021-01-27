@@ -11,8 +11,8 @@ class WurCommonNetDevice;
 class WurCommonPhy;
 class WurSharedMac : public Object {
        public:
-        static TypeId GetTypeId(void);
 	// TODO: implement
+	static TypeId GetTypeId();
 	WurSharedMac() {
 		Initialize();
 	}
