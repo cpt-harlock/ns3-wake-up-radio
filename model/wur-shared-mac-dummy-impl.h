@@ -14,6 +14,7 @@ class WurSharedMacDummyImpl : public WurSharedMac {
 	void StartWurRxMechanismImpl();
 	void OnDataRx(Ptr<Packet>);
 	void OnWurRx(Ptr<Packet>);
+	void OnWurTx(Ptr<Packet>);
 	void StartDataTx();
 	void StartDataRx();
 	void SetPromisc(void);

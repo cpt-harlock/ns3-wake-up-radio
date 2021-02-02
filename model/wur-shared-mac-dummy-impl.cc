@@ -1,6 +1,8 @@
 #include "wur-shared-mac-dummy-impl.h"
+#include "ns3/log-macros-enabled.h"
 #include "ns3/mac8-address.h"
 #include "ns3/object.h"
+#include "ns3/ptr.h"
 #include "wur-common-net-device.h"
 #include "wur-common-phy.h"
 #include "wur-common-psdu.h"
@@ -14,7 +16,26 @@ Address WurSharedMacDummyImpl::GetAddress() const { return m_address; }
 void WurSharedMacDummyImpl::StartWurTxMechanismImpl() {
 	// dummy invocation of OnWurTxMechanismSuccess
 	NS_LOG_FUNCTION_NOARGS();
-	OnWurTxMechanismSuccess();
+	//send a wur packet
+	Ptr<Packet> wurPacket = Create<Packet>();
+	WurSharedMacDummyImplHeader header;
+	header.SetFrom(GetAddress());
+	header.SetTo(std::get<1>(m_txqueue.front()));
+	wurPacket->AddHeader(header);
+	Ptr<WurCommonPsdu> psdu = Create<WurCommonPsdu>();
+	psdu->SetPayload(wurPacket);
+	NS_LOG_FUNCTION(this << "wur phy state" << GetWurRadioPhy()->GetState());
+	if(GetWurRadioPhy()->GetState() == WurCommonPhy::WurCommonPhyState::IDLE) {
+		NS_LOG_FUNCTION(this << "sending wur packet");
+		GetWurRadioPhy()->StartTx(psdu);
+		//waiting for TX ending
+	}
+}
+
+//to be set as txOkCallback in wur phy
+void WurSharedMacDummyImpl::OnWurTx(Ptr<Packet> packet) {
+	NS_LOG_FUNCTION_NOARGS();
+	OnWurTxMechanismSuccess();	
 }
 void WurSharedMacDummyImpl::StartWurRxMechanismImpl() {
 	// dummy invocation of OnWurRxMechanismSuccess
@@ -28,8 +49,19 @@ void WurSharedMacDummyImpl::OnDataRx(Ptr<Packet> packet) {
        	packet->PeekHeader(header);	
 	NS_LOG_FUNCTION(header.GetFrom() << " " << header.GetTo());
 }
+//to be set as rxOkCallback in wur phy
 void WurSharedMacDummyImpl::OnWurRx(Ptr<Packet> packet) {
-	// TODO: print packet
+	NS_LOG_FUNCTION_NOARGS();
+	WurSharedMacDummyImplHeader header;
+	packet->RemoveHeader(header);
+	if(header.GetTo() == Mac8Address::ConvertFrom(GetAddress())) {
+		//if IDLE, start wur rx mechanism
+		if(m_state  == WurSharedMac::WurSharedMacState::IDLE) {
+			NS_LOG_FUNCTION("Received wur packet for me " << header.GetTo());
+			StartWurRxMechanism();
+		}
+			
+	}	
 }
 void WurSharedMacDummyImpl::StartDataTx() {
 	NS_LOG_FUNCTION_NOARGS();
@@ -53,7 +85,10 @@ void WurSharedMacDummyImpl::StartDataTx() {
 		GetMainRadioPhy()->StartTx(psdu);
 	}
 }
-void WurSharedMacDummyImpl::StartDataRx() { GetMainRadioPhy()->TurnOn(); }
+void WurSharedMacDummyImpl::StartDataRx() { 
+	NS_LOG_FUNCTION_NOARGS();
+	GetMainRadioPhy()->TurnOn(); 
+}
 void WurSharedMacDummyImpl::SetPromisc(void) {}
 
 TypeId WurSharedMacDummyImpl::WurSharedMacDummyImplHeader::GetTypeId(void) {

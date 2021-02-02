@@ -38,6 +38,8 @@ class WurSharedMac : public Object {
         virtual void OnDataRx(Ptr<Packet>) = 0;
 	//Invoked when receiving packet from wur radio
         virtual void OnWurRx(Ptr<Packet>) = 0;
+	//Invoked when phy successfully transmit a wur packet
+        virtual void OnWurTx(Ptr<Packet>) = 0;
 	//Timeout timer for wur tx mechanism
         void TimerWurTxMechanismCallback();
 	//Timeout timer for wur tx mechanism

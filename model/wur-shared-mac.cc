@@ -24,6 +24,8 @@ void WurSharedMac::Enqueue(Ptr<Packet> packet, Address to) {
 	NS_LOG_FUNCTION(packet);
 	NS_LOG_INFO("Packets in queueu: " + std::to_string(m_txqueue.size()));
 	// if in IDLE state, try send packet immediately
+	// TODO: do something else, e.g. invoke a wrapper
+	// implemented in a subclass
 	if (m_state == WurSharedMacState::IDLE) {
 		StartWurTxMechanism();
 	}
