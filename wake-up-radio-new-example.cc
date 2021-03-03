@@ -152,12 +152,12 @@ int main(int argc, char** argv) {
 
         /* Energy Section for sender */
         Ptr<EnergySource> energySource = CreateObject<LiIonEnergySource>();
-        Ptr<DeviceEnergyModel> mainRadioEnergyModel = CreateObject<MainRadioEnergyModel>();
+        Ptr<RadioEnergyModel> mainRadioEnergyModel = CreateObject<MainRadioEnergyModel>();
         mainRadioEnergyModel->SetEnergySource(energySource);
+        mainRadioEnergyModel->SetNode(senderNode);
         energySource->AppendDeviceEnergyModel(mainRadioEnergyModel);
         energySource->SetNode(senderNode);
         senderPhy->SetEnergyModelCallback(MakeCallback(&DeviceEnergyModel::ChangeState,mainRadioEnergyModel));
-
 
 	std::cout << "Starting simulation" << std::endl;
 	Simulator::Stop(Seconds(10));

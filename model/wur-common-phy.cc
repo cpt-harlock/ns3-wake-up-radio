@@ -46,6 +46,7 @@ void WurCommonPhy::StartReceivePreamble(Ptr<WurCommonPpdu> ppdu,
                 case WurCommonPhyState::DISABLED:
                         NS_LOG_DEBUG("Drop packet as radio is out of energy");
                         NotifyRxDrop(ppdu, "Disabled");
+                        break;
                 default:
                         NS_FATAL_ERROR("Invalid WurCommonPhy state.");
                         break;
@@ -87,6 +88,7 @@ void WurCommonPhy::SetEnergyModelCallback(
 }
 
 void WurCommonPhy::ChangeState(WurCommonPhy::WurCommonPhyState state) {
+        NS_LOG_FUNCTION(state);
         m_state = state;
         if (!m_energyModelCallback.IsNull()) m_energyModelCallback(state);
 }

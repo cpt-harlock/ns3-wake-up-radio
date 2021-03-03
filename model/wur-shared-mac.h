@@ -80,10 +80,10 @@ class WurSharedMac : public Object {
 	Timer wurReceivingTimer;
         Timer dataSendingTimer;
         Timer dataReceivingTimer;
-        Time WUR_TX_MECHANISM_TIMEOUT = MilliSeconds(10);
+        Time WUR_TX_MECHANISM_TIMEOUT = MilliSeconds(20);
         Time WUR_RX_MECHANISM_TIMEOUT = MilliSeconds(10);
         Time DATA_RECEPTION_TIMEOUT = MilliSeconds(50);
-        Time DATA_TRANSMISSION_TIMEOUT = MilliSeconds(50);
+        Time DATA_TRANSMISSION_TIMEOUT = MilliSeconds(30);
         TracedCallback<Ptr<const Packet>> m_macTxTrace;
         TracedCallback<Ptr<const Packet>> m_macTxDropTrace;
         TracedCallback<Ptr<const Packet>> m_macRxDropTrace;
