@@ -1,4 +1,7 @@
+#include "contrib/wake-up-radio/model/main-radio-energy-model.h"
 #include "ns3/callback.h"
+#include "ns3/device-energy-model.h"
+#include "ns3/energy-source.h"
 #include "ns3/object.h"
 #include "ns3/simulator.h"
 //#include "ns3/address.h"
@@ -33,6 +36,7 @@
 #include "ns3/wur-common-net-device-dummy-impl.h"
 #include "ns3/wur-common-phy.h"
 #include "ns3/wur-common-phy-dummy-impl.h"
+#include "src/energy/model/li-ion-energy-source.h"
 //
 using namespace ns3;
 //
@@ -145,6 +149,16 @@ int main(int argc, char** argv) {
 	senderPhy->TurnOff();
 	senderWurPhy->TurnOn();
 	receiverWurPhy->TurnOn();
+
+        /* Energy Section for sender */
+        Ptr<EnergySource> energySource = CreateObject<LiIonEnergySource>();
+        Ptr<DeviceEnergyModel> mainRadioEnergyModel = CreateObject<MainRadioEnergyModel>();
+        mainRadioEnergyModel->SetEnergySource(energySource);
+        energySource->AppendDeviceEnergyModel(mainRadioEnergyModel);
+        energySource->SetNode(senderNode);
+        senderPhy->SetEnergyModelCallback(MakeCallback(&DeviceEnergyModel::ChangeState,mainRadioEnergyModel));
+
+
 	std::cout << "Starting simulation" << std::endl;
 	Simulator::Stop(Seconds(10));
 	Simulator::Run();

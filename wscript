@@ -9,18 +9,7 @@
 def build(bld):
     module = bld.create_ns3_module('wake-up-radio', ['core'])
     module.source = [
-        'model/wur-main-radio-net-device.cc',
-        'model/wur-main-radio-net-device-channel.cc',
-        'model/wur-main-radio-net-device-phy.cc',
-        'model/wur-main-radio-net-device-dummy-phy.cc',
-        'model/wur-main-radio-net-device-phy-state-helper.cc',
-        'model/wur-main-radio-ppdu.cc',
-        'model/wur-main-radio-psdu.cc',
-        'model/wur-common-mac.cc',
-        'model/wur-common-mac-state-helper.cc',
         'model/wur-ppdu.cc',
-        'model/wur-common-dummy-mac.cc',
-        'model/wur-common-dummy-mac-header.cc',
 	'model/wur-common-channel.cc',
 	'model/wur-common-phy.cc',
 	'model/wur-common-ppdu.cc',
@@ -30,6 +19,9 @@ def build(bld):
 	'model/wur-shared-mac-dummy-impl.cc',
 	'model/wur-common-phy-dummy-impl.cc',
 	'model/wur-common-net-device-dummy-impl.cc',
+        'model/radio-energy-model.cc',
+        'model/main-radio-energy-model.cc',
+        'model/wur-radio-energy-model.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('wake-up-radio')
@@ -45,18 +37,7 @@ def build(bld):
     headers = bld(features='ns3header')
     headers.module = 'wake-up-radio'
     headers.source = [
-        'model/wur-main-radio-net-device.h',
-        'model/wur-main-radio-net-device-channel.h',
-        'model/wur-main-radio-net-device-phy.h',
-        'model/wur-main-radio-net-device-dummy-phy.h',
-        'model/wur-main-radio-net-device-phy-state-helper.h',
-        'model/wur-main-radio-ppdu.h',
-        'model/wur-main-radio-psdu.h',
-        'model/wur-common-mac.h',
-        'model/wur-common-mac-state-helper.h',
         'model/wur-ppdu.h',
-        'model/wur-common-dummy-mac.h',
-        'model/wur-common-dummy-mac-header.h',
 	'model/wur-common-channel.h',
 	'model/wur-common-ppdu.h',
 	'model/wur-common-psdu.h',
@@ -66,7 +47,9 @@ def build(bld):
 	'model/wur-shared-mac-dummy-impl.h',
 	'model/wur-common-phy-dummy-impl.h',
 	'model/wur-common-net-device-dummy-impl.h',
-	'model/wur-net-device.h',
+        'model/radio-energy-model.h',
+        'model/main-radio-energy-model.h',
+        'model/wur-radio-energy-model.h',
        ]
 
     if bld.env.ENABLE_EXAMPLES:

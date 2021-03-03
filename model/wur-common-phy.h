@@ -1,5 +1,6 @@
 #ifndef WUR_COMMON_PHY_H
 #define WUR_COMMON_PHY_H
+#include "ns3/device-energy-model.h"
 #include "ns3/mobility-model.h"
 #include "ns3/net-device.h"
 #include "ns3/nstime.h"
@@ -54,6 +55,9 @@ class WurCommonPhy : public Object {
 	virtual void NotifyTxEnd(Ptr<const WurCommonPpdu>) = 0;
 	virtual void StartRx(Ptr<WurCommonPpdu> ppdu, double rxPowerDbm) = 0;
 	virtual void StartTx(Ptr<WurCommonPsdu> psdu) = 0;
+        virtual void SetEnergyModelCallback(DeviceEnergyModel::ChangeStateCallback);
+        virtual void EnergyDepletionHandler(void);
+        virtual void EnergyRechargeHandler(void);
        private:
 	Ptr<MobilityModel> m_mobility;
 	Ptr<WurCommonPpdu> m_rxPacket;
@@ -63,12 +67,14 @@ class WurCommonPhy : public Object {
 	double m_rxSensitivityDbm;
 	double m_rxPowerDbm;
 	double m_txPowerDbm;
+        
 
        protected:
 	Ptr<WurCommonChannel> m_channel;
 	Ptr<WurCommonNetDevice> m_netDevice;
 	RxOkCallback m_rxOkCallback;
 	TxOkCallback m_txOkCallback;
+        DeviceEnergyModel::ChangeStateCallback m_energyModelCallback;
 	WurCommonPhyState m_state;
 	Time m_preambleDuration;
 
@@ -84,6 +90,8 @@ class WurCommonPhy : public Object {
 
 	void UnsetRxPacket() { m_rxPacket = nullptr;  } 
 	void UnsetTxPacket() { m_txPacket = nullptr;  } 
+
+        void ChangeState(WurCommonPhy::WurCommonPhyState);
 
        public:
 	void SetRxOkCallback(RxOkCallback callback) { m_rxOkCallback = callback; }

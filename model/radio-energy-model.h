@@ -5,6 +5,7 @@
  */
 #include "ns3/device-energy-model.h"
 #include "ns3/traced-value.h"
+#include "ns3/nstime.h"
 namespace ns3 {
 class RadioEnergyModel : public DeviceEnergyModel {
        public:

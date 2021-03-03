@@ -2,7 +2,7 @@
 #include "wur-common-net-device.h"
 #include "wur-common-phy.h"
 namespace ns3 {
-NS_LOG_COMPONENT_DEFINE(WurRadioEnergyModel);
+NS_LOG_COMPONENT_DEFINE("WurRadioEnergyModel");
 void WurRadioEnergyModel::HandleEnergyDepletion(void) {
 	NS_LOG_FUNCTION(this);
 	NS_LOG_DEBUG("WurRadioEnergyModel:Energy is depleted at node #"

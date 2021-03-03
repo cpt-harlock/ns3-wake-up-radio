@@ -32,7 +32,7 @@ void WurCommonPhyDummyImpl::StartRx(Ptr<WurCommonPpdu> ppdu,
 void WurCommonPhyDummyImpl::EndRx(Ptr<WurCommonPpdu> ppdu) {
 	NS_LOG_FUNCTION_NOARGS();
 	UnsetRxPacket();
-	m_state = WurCommonPhyState::IDLE;
+        ChangeState(WurCommonPhy::IDLE);
 	m_rxOkCallback(ppdu->GetPsdu()->GetPayload());
 }
 void WurCommonPhyDummyImpl::StartTx(Ptr<WurCommonPsdu> psdu) {
@@ -41,7 +41,7 @@ void WurCommonPhyDummyImpl::StartTx(Ptr<WurCommonPsdu> psdu) {
 	Ptr<WurCommonPpdu> ppdu = Create<WurCommonPpdu>();
 	ppdu->SetPsdu(psdu);
 	SetTxPacket(ppdu);
-	m_state = WurCommonPhyState::TX;
+        ChangeState(WurCommonPhy::TX);
 	Time delay = Seconds(
 	    (GetTxPacket()->GetPsdu()->GetPayload()->GetSerializedSize()) /
 	    m_dataRate);
@@ -51,7 +51,7 @@ void WurCommonPhyDummyImpl::StartTx(Ptr<WurCommonPsdu> psdu) {
 }
 void WurCommonPhyDummyImpl::EndTx(Ptr<WurCommonPpdu> ppdu) {
 	UnsetTxPacket();
-	m_state = WurCommonPhyState::IDLE;
+        ChangeState(WurCommonPhy::IDLE);
 	m_txOkCallback(ppdu->GetPsdu()->GetPayload());
 }
 
