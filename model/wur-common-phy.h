@@ -23,6 +23,7 @@ class WurCommonPhy : public Object {
 		IDLE,
 		TX,
 		RX,
+		DISABLED,
 	} WurCommonPhyState;
 	Ptr<WurCommonChannel> GetChannel() const; 
 	Ptr<MobilityModel> GetMobility() const; 
