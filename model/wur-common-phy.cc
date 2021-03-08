@@ -97,7 +97,6 @@ void WurCommonPhy::ChangeState(WurCommonPhy::WurCommonPhyState state) {
  * Invoked when we're out of energy
  */
 void WurCommonPhy::EnergyDepletionHandler() {
-        //ChangeState(WurCommonPhyState::DISABLED);
         m_state = WurCommonPhyState::DISABLED;
         if(m_rxPacket != nullptr)
                 m_rxPacket->SetTruncatedRx();

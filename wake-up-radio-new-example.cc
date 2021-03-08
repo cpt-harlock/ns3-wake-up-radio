@@ -1,7 +1,9 @@
 #include "contrib/wake-up-radio/model/main-radio-energy-model.h"
+#include "ns3/basic-energy-harvester.h"
 #include "ns3/callback.h"
 #include "ns3/device-energy-model.h"
 #include "ns3/energy-source.h"
+#include "ns3/nstime.h"
 #include "ns3/object.h"
 #include "ns3/simulator.h"
 //#include "ns3/address.h"
@@ -36,7 +38,9 @@
 #include "ns3/wur-common-net-device-dummy-impl.h"
 #include "ns3/wur-common-phy.h"
 #include "ns3/wur-common-phy-dummy-impl.h"
+#include "ns3/wur-radio-energy-model.h"
 #include "src/energy/model/li-ion-energy-source.h"
+#include "ns3/basic-energy-harvester-helper.h"
 //
 using namespace ns3;
 //
@@ -152,12 +156,23 @@ int main(int argc, char** argv) {
 
         /* Energy Section for sender */
         Ptr<EnergySource> energySource = CreateObject<LiIonEnergySource>();
+        energySource->GetObject<LiIonEnergySource>()->SetInitialEnergy(0.14);
         Ptr<RadioEnergyModel> mainRadioEnergyModel = CreateObject<MainRadioEnergyModel>();
         mainRadioEnergyModel->SetEnergySource(energySource);
         mainRadioEnergyModel->SetNode(senderNode);
+        Ptr<RadioEnergyModel> wurRadioEnergyModel = CreateObject<WurRadioEnergyModel>();
+        wurRadioEnergyModel->SetEnergySource(energySource);
+        wurRadioEnergyModel->SetNode(senderNode);
+
+
         energySource->AppendDeviceEnergyModel(mainRadioEnergyModel);
+        energySource->AppendDeviceEnergyModel(wurRadioEnergyModel);
         energySource->SetNode(senderNode);
+        BasicEnergyHarvesterHelper energyHelper;
+        energyHelper.Install(energySource);
         senderPhy->SetEnergyModelCallback(MakeCallback(&DeviceEnergyModel::ChangeState,mainRadioEnergyModel));
+        senderWurPhy->SetEnergyModelCallback(MakeCallback(&DeviceEnergyModel::ChangeState,wurRadioEnergyModel));
+
 
 	std::cout << "Starting simulation" << std::endl;
 	Simulator::Stop(Seconds(10));
