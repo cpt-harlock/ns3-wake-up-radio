@@ -182,6 +182,7 @@ void RadioEnergyModel::ChangeState(int newState) {
 
         // update total energy consumption
         m_totalEnergyConsumption += energyToDecrease;
+        NS_LOG_FUNCTION("Energy consumed" <<  energyToDecrease << "in time" << duration.GetSeconds() << "previous state" << m_currentState);
 
         // update last update time stamp
         m_lastUpdateTime = Simulator::Now();
@@ -189,10 +190,7 @@ void RadioEnergyModel::ChangeState(int newState) {
         // notify energy source
         m_source->UpdateEnergySource();
 
-        if (m_currentState != WurCommonPhy ::WurCommonPhyState::DISABLED) {
-                // update current state & last update time stamp
-                SetMicroModemState(newState);
-        }
+        SetMicroModemState(newState);
 
         // some debug message
         NS_LOG_DEBUG("RadioEnergyModel:Total energy consumption at node #"

@@ -54,12 +54,14 @@ void WurCommonPhy::StartReceivePreamble(Ptr<WurCommonPpdu> ppdu,
 }
 
 void WurCommonPhy::TurnOn() {
+        NS_LOG_FUNCTION_NOARGS();
         if (m_state == WurCommonPhyState::OFF) {
                 ChangeState(WurCommonPhyState::IDLE);
         }
 }
 
 void WurCommonPhy::TurnOff() {
+        NS_LOG_FUNCTION_NOARGS();
         if (m_state != WurCommonPhyState::OFF && m_state != WurCommonPhyState::DISABLED) {
                 ChangeState(WurCommonPhyState::OFF);
                 if (m_rxPacket != nullptr) m_rxPacket->SetTruncatedRx();
@@ -89,14 +91,21 @@ void WurCommonPhy::SetEnergyModelCallback(
 
 void WurCommonPhy::ChangeState(WurCommonPhy::WurCommonPhyState state) {
         NS_LOG_FUNCTION(state);
-        m_state = state;
         if (!m_energyModelCallback.IsNull()) m_energyModelCallback(state);
+        //I could be disabled due to previous function call
+        //Hence, I only set new state if I wasn't disabled
+        if(m_state != DISABLED)
+                m_state = state;
+        else
+                //need to correctly set energy model state if I have been disabled
+                m_energyModelCallback(m_state);
 }
 
 /**
  * Invoked when we're out of energy
  */
 void WurCommonPhy::EnergyDepletionHandler() {
+        NS_LOG_FUNCTION_NOARGS();
         m_state = WurCommonPhyState::DISABLED;
         if(m_rxPacket != nullptr)
                 m_rxPacket->SetTruncatedRx();

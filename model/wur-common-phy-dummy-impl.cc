@@ -50,7 +50,9 @@ void WurCommonPhyDummyImpl::StartTx(Ptr<WurCommonPsdu> psdu) {
 	GetChannel()->Send(this, ppdu, GetTxPower());
 }
 void WurCommonPhyDummyImpl::EndTx(Ptr<WurCommonPpdu> ppdu) {
+        NS_LOG_FUNCTION_NOARGS();
 	UnsetTxPacket();
+        //change state to IDLE, not to OFF (it is on behalf of the MAC protocol to do that)
         ChangeState(WurCommonPhy::IDLE);
 	m_txOkCallback(ppdu->GetPsdu()->GetPayload());
 }

@@ -6,7 +6,7 @@ namespace ns3 {
 NS_LOG_COMPONENT_DEFINE("MainRadioEnergyModel");
 void MainRadioEnergyModel::HandleEnergyDepletion(void) {
         NS_LOG_FUNCTION(this);
-        NS_LOG_DEBUG("RadioEnergyModel:Energy is depleted at node #"
+        NS_LOG_DEBUG("MainRadioEnergyModel:Energy is depleted at node #"
                      << m_node->GetId());
         // invoke energy depletion callback, if set.
         if (!m_energyDepletionCallback.IsNull()) {
@@ -16,7 +16,6 @@ void MainRadioEnergyModel::HandleEnergyDepletion(void) {
         Ptr<WurCommonNetDevice> dev =
             m_node->GetDevice(0)->GetObject<WurCommonNetDevice>();
         dev->GetMainRadioPhy()->EnergyDepletionHandler();
-        // TODO: understand why he disables the radio
         SetMicroModemState(WurCommonPhy::WurCommonPhyState::DISABLED);
 }
 
@@ -32,7 +31,6 @@ void MainRadioEnergyModel::HandleEnergyRecharged(void) {
         Ptr<WurCommonNetDevice> dev =
             m_node->GetDevice(0)->GetObject<WurCommonNetDevice>();
         dev->GetMainRadioPhy()->EnergyRechargeHandler();
-        // TODO: why he sets the modem to IDLE
         SetMicroModemState(WurCommonPhy::WurCommonPhyState::OFF);
 }
 }  // namespace ns3
