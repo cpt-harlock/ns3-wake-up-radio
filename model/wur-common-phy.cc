@@ -91,14 +91,14 @@ void WurCommonPhy::SetEnergyModelCallback(
 
 void WurCommonPhy::ChangeState(WurCommonPhy::WurCommonPhyState state) {
         NS_LOG_FUNCTION(state);
+        //can't set disabled state with ChangeState, must be manually done in the depletion handler
+        NS_ASSERT(state != DISABLED);
         if (!m_energyModelCallback.IsNull()) m_energyModelCallback(state);
         //I could be disabled due to previous function call
         //Hence, I only set new state if I wasn't disabled
         if(m_state != DISABLED)
                 m_state = state;
-        else
-                //need to correctly set energy model state if I have been disabled
-                m_energyModelCallback(m_state);
+        NS_LOG_FUNCTION("Final state" << m_state);
 }
 
 /**

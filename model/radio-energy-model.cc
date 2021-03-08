@@ -190,7 +190,9 @@ void RadioEnergyModel::ChangeState(int newState) {
         // notify energy source
         m_source->UpdateEnergySource();
 
-        SetMicroModemState(newState);
+        //change state only if we're not out of energy
+        if(m_currentState != WurCommonPhy::WurCommonPhyState::DISABLED)
+                SetMicroModemState(newState);
 
         // some debug message
         NS_LOG_DEBUG("RadioEnergyModel:Total energy consumption at node #"
