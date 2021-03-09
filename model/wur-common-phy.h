@@ -1,5 +1,6 @@
 #ifndef WUR_COMMON_PHY_H
 #define WUR_COMMON_PHY_H
+#include "contrib/wake-up-radio/model/radio-interference-helper.h"
 #include "ns3/device-energy-model.h"
 #include "ns3/mobility-model.h"
 #include "ns3/net-device.h"
@@ -53,7 +54,7 @@ class WurCommonPhy : public Object {
 	virtual void NotifyTxBegin(Ptr<const WurCommonPpdu>, double) = 0;
 	virtual void NotifyTxDrop(Ptr<const WurCommonPpdu>) = 0;
 	virtual void NotifyTxEnd(Ptr<const WurCommonPpdu>) = 0;
-	virtual void StartRx(Ptr<WurCommonPpdu> ppdu, double rxPowerDbm) = 0;
+	virtual void StartRx(Ptr<RadioEvent> event, double rxPowerDbm);
 	virtual void StartTx(Ptr<WurCommonPsdu> psdu) = 0;
         virtual void SetEnergyModelCallback(DeviceEnergyModel::ChangeStateCallback);
         virtual void EnergyDepletionHandler(void);
@@ -62,6 +63,8 @@ class WurCommonPhy : public Object {
 	Ptr<MobilityModel> m_mobility;
 	Ptr<WurCommonPpdu> m_rxPacket;
 	Ptr<WurCommonPpdu> m_txPacket;
+        Ptr<RadioEvent> m_currentEvent;
+        Ptr<RadioInterferenceHelper> m_interference;
 	double m_rxGainDbm;
 	double m_txGainDbm;
 	double m_rxSensitivityDbm;
@@ -77,6 +80,7 @@ class WurCommonPhy : public Object {
         DeviceEnergyModel::ChangeStateCallback m_energyModelCallback;
 	WurCommonPhyState m_state;
 	Time m_preambleDuration;
+        EventId m_endPreambleDetectionEvent; 
 
 	void SetRxPacket(Ptr<WurCommonPpdu> rxPacket) {
 		m_rxPacket = rxPacket;
